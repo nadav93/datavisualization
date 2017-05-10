@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+
+  svg {
+  	border: 1px solid #f0f;
+  }
+
+  .rectangle31 {
+  	fill: #0080FF;
+  	opacity: .5;
+  }
+
+</style>
+
+<body>
+	<h1>Barley</h1>
+
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+
+var margin = {top: 5, right: 5, bottom: 20, left: 20};
+
+var w = 500 - margin.left - margin.right,
+    h = 400 - margin.top - margin.bottom;
+
+var chart = d3.select("body").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+	.append("g") //it's actually a g within an svg. technically a reference to my g from here on out
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); //?
+
+d3.tsv("data.txt", ready);
+function ready(err, data){
+	if (err) throw "error loading data";
+
+	var barleygroup = data.filter(function(d){
+		return d.site == "Crookston" && d.year == "1931";
+	});
+
+	console.log("data", barleygroup);
+
+	var xscale = d3.scalePoint()
+		.domain(['Manchuria','Glabron','Svansota','Velvet','Trebi','Peatland', 'No. 457', 'No. 475', "No. 462", "Wisconsin No. 38"]).padding(0.1)
+		.range([0, w]); //projecting to pixel land
+
+	var yscale = d3.scaleLinear()
+		.domain([0,50])
+		.range([h,0]);
+
+	var xaxis = d3.axisBottom() //means the ticks will go below rather than above
+		.scale(xscale) //needs to know scale to project along svg
+		//.tickSize(-h); //optional
+		//.tickValues(xscale.domain().filter(function(d,i){ return !(i%10); } );
+		//.orient("bottom");
+		//var ticks = scale.domain();
+
+
+	var yaxis = d3.axisLeft()
+		.scale(yscale)
+		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
+
+	chart.append("g") //"g" is the parent group for the ticks
+		.attr("class", "axis")
+		.call(xaxis)
+		.attr("transform", "translate(0," + h + ")"); //moves the x axis down
+
+	chart.append("g") //"g" stands for group
+		.attr("class", "axis") //would give them all a class
+		.call(yaxis);
+
+	var agroup = chart.selectAll("g.a-group") //grab all items that have this a-group characteristic in the svg
+		.data(barleygroup) //here's my data that I am binding to the element
+		.enter() //data should enter those elemnts
+		.append("g")
+		.attr("class", "a-group")
+		.attr("transform", function(d) { //d is the element at that index
+			return "translate(" + xscale(d.variety) + ",0)";
+		});
+
+		agroup.append("rect")
+		.attr("class", "rectangle31")
+		//.attr("x", function(d, i) {return i * 1.1;}) //***
+		//.attr("x", 0)
+	    //.attr("y", 0)
+	    //.attr("x", function(d) { return xscale(d.variety); })
+      	.attr("y", function(d) { return yscale(d.yield); })
+      	//.attr("x", function(d) { return xscale(d.variety); })
+		//.attr("width", function(d) { return xscale(d.variety)})
+		//.attr("width", 20)
+		.attr("width", xscale('Glabron'))
+		//.attr("width", function(d,i){xscale(i)})
+		.attr("height", function(d){
+			console.log(xscale('Glabron'))
+			return h - yscale(d.yield);
+		});
+
+		agroup.append("text")
+		.text(function(d) {
+			return d.variety + ": " + Math.round(d.yield * 100)/100;
+		})
+		.attr("dx", -200) //nudge over 10
+		.attr("dy", 40)
+		.attr("transform", "rotate(-90)");
+
+	}
+
+
+</script>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+  /*css to go here*/
+
+  svg {
+  	border: 1px solid #f0f; /*to keep track of the svg border*/
+  }
+</style>
+
+<body>
+	<h1>Anscombe's Quartet II</h1>
+
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+var anscombeData  = [
+    {"x": 14, "y": 8.1},
+    {"x": 13, "y": 8.74},
+    {"x": 12, "y": 9.13},
+    {"x": 11, "y": 9.26},
+    {"x": 10, "y": 9.14},
+    {"x": 9, "y": 8.77},
+    {"x": 8, "y": 8.14},
+    {"x": 7, "y": 7.26},
+    {"x": 6, "y": 6.13},
+    {"x": 5, "y": 4.74},
+    {"x": 4, "y": 3.1}
+];
+
+var w = 500, h = 400;
+
+var xscale = d3.scaleLinear() //created to use later
+	.domain([0,20]) //project this from data land...
+	.range([0,w])//to pixel land
+
+var yscale = d3.scaleLinear() //created to use later
+	.domain([0,10])
+	.range([h,0])
+
+var chart = d3.select("body") //this is my svg container
+	.append("svg") 
+	.attr("width", w)
+	.attr("height", h);
+
+chart.selectAll("circle") //select all the circles
+	.data(anscombeData) //here's my data that I am binding to the element
+	.enter() //data should enter those elemnts
+	.append("circle") //append those circles
+	.attr("r", 3) //they need a radius of size 3
+	.attr("cx", function(d) { //could also have done "cx", 5
+		return xscale(d.x);
+	})
+	.attr("cy", function(d) {
+		return yscale(d.y);
+	})
+
+
+  //JS to go here
+</script>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+  /*css to go here*/
+
+  svg {
+  	border: 1px solid #f0f; /*to keep track of the svg border... optional*/
+  }
+
+  .axis line { 
+  	stroke: #d0d0d0;
+  	stroke-dasharray: 4px 4px;
+  }
+
+  .rectangle {
+  	fill: #FF9E2C;
+  	opacity: .5;
+  }
+
+</style>
+
+<body>
+	<h1>Anscombe's Quartet IV</h1>
+
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+
+var margin = {top: 5, right: 5, bottom: 20, left: 20};
+
+var w = 500 - margin.left - margin.right,
+    h = 400 - margin.top - margin.bottom;
+
+var chart = d3.select("body").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+	.append("g") //it's actually a g within an svg. technically a reference to my g from here on out
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); //?
+
+d3.tsv("quartet.tsv", ready); //when you're done, fire a function called 'ready'
+
+
+function ready(err, data){
+	if (err) throw "error loading data";
+
+	console.log("data", data);
+
+	var groupIV = data.filter(function(d){ //filtering
+		return d.group == "IV";
+	});
+
+	var xscale = d3.scaleLinear()
+		.domain([0,20]) //project this from data land...
+		.range([0,w])//to pixel land
+
+	var yscale = d3.scaleLinear()
+		.domain([0,20])
+		.range([h,0])
+
+//The xaxis and yaxis functions don't 'do' anything.. they just create axes when we call them:
+	var xaxis = d3.axisBottom() //means the ticks will go below rather than above
+		.scale(xscale) //needs to know scale to project along svg
+		.tickSize(-h); //optional
+
+	var yaxis = d3.axisLeft()
+		.scale(yscale)
+		.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
+
+	chart.append("rect")
+		.attr("class", "rectangle")
+	    .attr("x", 0)
+	    .attr("y", 0)
+	    .attr("width", w)
+	    .attr("height", h);
+
+	//rendering my axis ticks and labels:
+	chart.append("g") //"g" is the parent group for the ticks
+		.attr("class", "axis") //would give them all a class called axis
+		.call(xaxis)
+		.attr("transform", "translate(0," + h + ")"); //moves the x axis down
+
+	chart.append("g") //"g" stands for group
+		.attr("class", "axis") //would give them all a class
+		.call(yaxis);
+
+	var agroup = chart.selectAll("g.a-group") //grab all items that have this a-group characteristic in the svg
+		.data(groupIV) //here's my data that I am binding to the element
+		.enter() //data should enter those elemnts
+		.append("g") //append those circles
+		.attr("class", "a-group")
+		.attr("transform", function(d) { //d is the element at that index
+			return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")"; //is this me scaling my dots
+		});
+
+		agroup.append("circle")
+		.attr('r', 5);
+
+		agroup.append("text")
+		.text(function(d) {
+			return d.x + "," + d.y + "!";
+		})
+		.attr("dx", 10) //nudge over 10
+		.attr("dy", -10); 
+
+	}
+
+	// var anscombeData  = [
+	//     {"x": 14, "y": 8.1},
+	//     {"x": 13, "y": 8.74},
+	//     {"x": 12, "y": 9.13},
+	//     {"x": 11, "y": 9.26},
+	//     {"x": 10, "y": 9.14},
+	//     {"x": 9, "y": 8.77},
+	//     {"x": 8, "y": 8.14},
+	//     {"x": 7, "y": 7.26},
+	//     {"x": 6, "y": 6.13},
+	//     {"x": 5, "y": 4.74},
+	//     {"x": 4, "y": 3.1}
+	// ];
+
+//var chart = d3.select("body") //this is my svg container
+//	.append("svg") //svg is an html element
+//	.attr("width", w)
+//	.attr("height", h);
+
+
+	//.attr("r", 3) //they need a radius of size 3
+	//.attr("cx", function(d) { //could also have done "cx", 5 <--positions the x
+	//	return xscale(d.x);
+	//})
+	//.attr("cy", function(d) { //<--positions the y
+	//	return yscale(d.y);
+	//})
+
+
+  //JS to go here
+</script>
