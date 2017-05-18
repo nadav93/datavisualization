@@ -7,16 +7,15 @@
   	border: 1px solid #f0f;
   }
 
-  .yr-1931 {
+  .rectangle31 {
   	fill: #0080FF;
   	opacity: .5;
   }
 
-  .yr-1932 {
+  .rectangle32 {
   	fill: #FA8072;
   	opacity: .9;
   }
-
 
 </style>
 
@@ -44,19 +43,15 @@ d3.tsv("data.txt", ready);
 function ready(err, data){
 	if (err) throw "error loading data";
 
-	/*var crookstondata31 = data.filter(function(d){
+	var crookstondata31 = data.filter(function(d){
 		return d.site == "Crookston" && d.year == "1931";
 	});
 
 	var crookstondata32 = data.filter(function(d){
 		return d.site == "Crookston" && d.year == "1932";
-	});*/
+	});
 
-	var crookstonD = data.filter(function(d) {
-        return d.site == "Crookston";
-    });
-
-	var xscale = d3.scaleBand()
+	xscale = d3.scaleBand()
 		.domain(['Manchuria','Glabron','Svansota','Velvet','Trebi','Peatland', 'No. 457', 'No. 475', "No. 462", "Wisconsin No. 38"]).padding(0.1)
 		.range([0, w]); //projecting to pixel land
 
@@ -80,50 +75,11 @@ function ready(err, data){
 		.attr("class", "axis") //would give them all a class
 		.call(yaxis);
 
-
-	var barleyData = chart.selectAll("g.barley-group") //grab all items that have this a-group characteristic in the svg
-		.data(crookstonD) //here's my data that I am binding to the element
+	var agroup31 = chart.selectAll("g.a-group31") //grab all items that have this a-group characteristic in the svg
+		.data(crookstondata31) //here's my data that I am binding to the element
 		.enter() //data should enter those elemnts
 		.append("g")
-		.attr("class", "barley-group")
-		/*.attr("transform", function(d) { //d is the element at that index
-			return "translate(" + xscale(d.variety) + ",0)";
-		});*/
-
-		barleyData.append("rect")
-		.attr("class", function(d){
-			return "barley-group yr-" + d.year;
-		})
-		.attr('x', function(d) {
-            // if you are 1932, move over a little bit more.
-            //var nudge = (d.year == 1932) ? 30 : 0;
-            return xscale(d.variety);
-        })
-        .attr("y", function(d) {
-        	return yscale(d.yield);
-        })
-        .attr('width', function(d){
-        	if (d.year == 1931){
-        	return xscale.bandwidth() }
-        	if (d.year == 1932){
-        		return xscale.bandwidth()-3
-        	}})
-        .attr('height', function(d) {
-            return h - yscale(d.yield);
-        })
-
-        barleyData.append("text")
-		.text(function(d) {
-			return "'" + d.year[2] + d.year[3] + ": " + Math.round(d.yield * 100)/100;
-		})
-		.attr("dx", function(d){
-			return xscale(d.variety);
-		})
-		.attr("dy", function(d){
-			return yscale(d.yield) + 15;
-		})
-
-        /*
+		.attr("class", "a-group31")
 		.attr("transform", function(d) { //d is the element at that index
 			return "translate(" + xscale(d.variety) + ",0)";
 		});
@@ -139,11 +95,11 @@ function ready(err, data){
 			return h - yscale(d.yield);
 		});
 
-	var agroup32 = chart.selectAll("g.a-group32") //i'm preparing to have a dom element w/ this class
+	var agroup32 = chart.selectAll("g.a-group32")
 		.data(crookstondata32)
 		.enter()
 		.append("g")
-		.attr("class", "a-group32") //give it the class itself. always matches up there.
+		.attr("class", "a-group32")
 		.attr("transform", function(d) {
 			return "translate(" + xscale(d.variety) + ",0)";
 		});
@@ -173,7 +129,7 @@ function ready(err, data){
 		.attr("dy", function(d){
 			return yscale(d.yield) + 15;
 		})
-		//.attr("transform", "rotate(-90)");*/
+		//.attr("transform", "rotate(-90)");
 
 	}
 
