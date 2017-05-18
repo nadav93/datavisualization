@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+  /*css to go here*/
+
+  svg {
+  	border: 1px solid black; /*to keep track of the svg border... optional*/
+  }
+
+  .axis line { 
+  	stroke: #d0d0d0;
+  	stroke-dasharray: 4px 4px;
+  }
+
+  .rectangle {
+  	fill: white;
+  }
+
+  .median-path {
+  	stroke: #ccc;
+  	stroke-width: 2;
+  	fill: none;
+  }
+
+    .median-path.usa-path {
+  	stroke: steelblue;
+  	stroke-width: 2;
+  	fill: none;
+  }
+
+</style>
+
+<body>
+	<h1>USA Median Incomes</h1>
+	<div class="g-chart-container"></div>
+
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+
+var margin = {top: 5, right: 30, bottom: 20, left: 40};
+
+var w = 800 - margin.left - margin.right,
+    h = 400 - margin.top - margin.bottom;
+
+var xscale = d3.scaleLinear()
+	.domain([1970,2020]) //project this from data land...
+	.range([0,w])//to pixel land
+
+var yscale = d3.scaleLinear()
+	.domain([0,45000])
+	.range([h,0])
+
+var xaxis = d3.axisBottom() //means the ticks will go below rather than above
+	.scale(xscale)
+	.tickFormat(d3.format("d"))
+	.tickSize(-h);
+
+var yaxis = d3.axisLeft()
+	.scale(yscale)
+	.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
+
+var chart = d3.select("body").append("svg")
+    .attr("width", w + margin.left + margin.right)
+    .attr("height", h + margin.top + margin.bottom)
+	.append("g") //it's actually a g within an svg. technically a reference to my g from here on out
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); //?
+
+d3.csv("data.csv", ready); //only fires when data is ready to load
+
+function ready(err, data){
+	if (err) throw "error loading data";
+
+	// var fiftieth = data.filter(function(d){
+	// 	return (d.cutoff == "cop50"); //returns all the data for cut off point 50
+	// });
+
+	dataByCutoff = d3.nest()
+  		.key(function(d) { return d.cutoff; }) //thing I am grouping by
+  		.key(function(d) { return d.country; }) //thing I am grouping by
+  		.entries(fiftieth);
+
+	var lineGenerator = d3.line()
+    	.x(function(d) { return xscale(d.year); })
+    	.y(function(d) { return yscale(d.val); });
+
+	chart.append("rect")
+		.attr("class", "rectangle")
+	    .attr("x", 0)
+	    .attr("y", 0)
+	    .attr("width", w)
+	    .attr("height", h);
+
+	//rendering my axis ticks and labels:
+	chart.append("g") //"g" is the parent group for the ticks
+		.attr("class", "axis") //would give them all a class called axis
+		.call(xaxis)
+		.attr("transform", "translate(0," + h + ")"); //moves the x axis down
+
+	chart.append("g") //"g" stands for group
+		.attr("class", "axis") //would give them all a class
+		.call(yaxis);
+
+	var country = chart.selectAll(".median-path")
+  	.data(dataByCountry)
+  	.enter()
+  	.append("path")
+  	.attr("d", function(d){ //give each path a d attribute. not regular d3 d... it's the name of the path's property.
+  		return lineGenerator(d.values)
+  	})
+  	.attr("class", "median-path") //this creates divs of class site
+  	.classed("usa-path", function(d){
+  		return d.key == "United States";});
+
+  	// 	country.append("text")
+		// .text(function(d) {
+		// 	return d.key;
+		// })
+		// .attr("dx",40)
+		// .attr("dy",40)
+
+	/*var incomeCircle = chart.selectAll("income-circle") //grab all items that have this a-group characteristic in the svg
+		.data(usa) //here's my data that I am binding to the element
+		.enter() //data should enter those elemnts
+		.append("g") //append those circles
+		.attr("class", "income-circle")
+		.attr("transform", function(d) { //d is the element at that index
+			return "translate(" + xscale(d.year) + "," + yscale(d.val) + ")"; //is this me scaling my dots
+		});
+
+		incomeCircle.append("circle")
+		.attr('r', 3);
+
+		incomeCircle.append("text")
+		.text(function(d) {
+			return d.val;
+		})
+		.attr("dy",-10)*/
+	}
+</script>
