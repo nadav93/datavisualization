@@ -70,7 +70,7 @@ function ready(err, data) {
     if (err) throw "error loading data";
 
     dataByCutoffAndCountry = d3.nest()
-        .key(function(d) { return d.cutoff; })
+        .key(function(d) { return d.cutoff; }) //first level grouping is by cutoff
         .key(function(d) { return d.country; })
         .entries(data);
 

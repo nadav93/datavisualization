@@ -106,7 +106,7 @@ function ready(err, data){
         	if (d.year == 1931){
         	return xscale.bandwidth() }
         	if (d.year == 1932){
-        		return xscale.bandwidth()-3
+        		return xscale.bandwidth()-3 //to make it thinner
         	}})
         .attr('height', function(d) {
             return h - yscale(d.yield);

@@ -117,18 +117,17 @@ function ready(err, data) {
         .range([h,0]);
 
     var xAxis = d3.axisBottom()
-        .scale(xscale)
-        .tickFormat(d3.format(".0f"));
+        .scale(xscale);
 
     var yAxis = d3.axisRight()
         .scale(yscale);
 
-  var lineGenerator = d3.line()
+  //var lineGenerator = d3.line()
         //.curve(d3.curveCardinal) //smooths out my lines
         //if you give me an array, this will return the giant path string for our d attribute
     	//all this does is create the d attribute
-        .x(function(d) { return xscale(d.year); })
-        .y(function(d) { return yscale(d.val); });
+        //.x(function(d) { return xscale(d.year); })
+        //.y(function(d) { return yscale(d.val); });
 
     svg.append("g")
         .attr("class", "xaxis axis")
@@ -164,6 +163,13 @@ function ready(err, data) {
      	var thisCountry = data.filter(function(d){
 			return d.country == countryName && d.cutoff == "cop50";
      	});
+
+     	//redraw xscale:
+        xscale
+        	.domain(d3.extent(thisCountry, function(d) { return d.year; }));
+        xAxis.scale(xscale);
+        svg.select(".xaxis")
+        .call(xAxis);
 
      	//console.log(countryName, thisCountry.length);
     	var updateDots = svg.selectAll(".g-dot")
