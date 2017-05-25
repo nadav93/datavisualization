@@ -61,15 +61,11 @@ function ready(err, data) {
 			d.newDiv = d.league + "-" + d.division[0].toUpperCase();
 			});
 
-    var al_central = data.filter(function(d) {
-        return d.newDiv == "AL-C";
-    }); //this is a new array of just AL-C Data
-    //console.log(al_central);
 
     var all_divisions = data.map(function(d){
     	return d.newDiv;
     })
-    var unique_divisions = d3.set(all_divisions).values(); //finds unique values from an array
+    var unique_divisions = d3.set(all_divisions).values().sort(); //finds unique values from an array
 
     var button = chartContainer.selectAll(".user-nav-button")
 	    .data(unique_divisions)
@@ -107,9 +103,9 @@ function ready(err, data) {
 	 		return yscale(d.pct);
 	   });
 
-    dataByDivision = d3.nest()
-        .key(function(d) { return d.team; }) //first level nest is by team
-        .entries(al_central);
+    // dataByDivision = d3.nest()
+    //     .key(function(d) { return d.team; }) //first level nest is by team
+    //     .entries(al_central);
 
     var xAxis = d3.axisBottom()
         .scale(xscale);
@@ -127,17 +123,40 @@ function ready(err, data) {
         .attr("class", "yaxis axis")
         .call(yAxis);
 
-    var teamPath = svg.selectAll(".team-path") //another data join so I can get a different value array by country
-   		.data(dataByDivision)
-        .enter()
-        .append("path")
-        .attr("class", "team-path")
-        .attr("d", function(d) {
-            return lineGenerator(d.values); //values for each country
-        });
-
     function updateChart(newdiv){
     	console.log("I clicked " + newdiv)
+
+    	var thisDiv = data.filter(function(d) {
+        return d.newDiv == newdiv;
+    		}); //this is a new array of just AL-C Data
+    //console.log(al_central);
+
+    	dataByDivision = d3.nest()
+	        .key(function(d) {
+	        	return d.team;
+	        })
+	        .entries(thisDiv);
+
+	    var teamPath = svg.selectAll(".team-path") //another data join so I can get a different value array by country
+	   		.data(dataByDivision)
+	    
+		    teamPath.exit() //won't hit this because each div has 5 teams.
+		    .style("fill", "red")
+		    .transition()
+		    .remove()
+
+		    teamPath.transition()
+		    .style("stroke", "purple")
+ 			.attr("d", function(d) {
+		        return lineGenerator(d.values); //values for each country
+		    });
+
+		    teamPath.enter()
+		        .append("path")
+		        .attr("class", "team-path")
+		        .attr("d", function(d) {
+		            return lineGenerator(d.values); //values for each country
+		        });
     }
 }
 </script>
