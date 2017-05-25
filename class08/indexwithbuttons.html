@@ -123,11 +123,11 @@ function ready(err, data) {
         .attr("class", "yaxis axis")
         .call(yAxis);
 
-    function updateChart(newdiv){
-    	console.log("I clicked " + newdiv)
+    function updateChart(league_div){
+    	console.log("I clicked " + league_div)
 
     	var thisDiv = data.filter(function(d) {
-        return d.newDiv == newdiv;
+        return d.newDiv == league_div;
     		}); //this is a new array of just AL-C Data
     //console.log(al_central);
 
@@ -139,7 +139,7 @@ function ready(err, data) {
 
 	    var teamPath = svg.selectAll(".team-path") //another data join so I can get a different value array by country
 	   		.data(dataByDivision)
-	    
+
 		    teamPath.exit() //won't hit this because each div has 5 teams.
 		    .style("fill", "red")
 		    .transition()
