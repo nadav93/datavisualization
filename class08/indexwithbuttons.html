@@ -66,23 +66,21 @@ function ready(err, data) {
     }); //this is a new array of just AL-C Data
     //console.log(al_central);
 
-    var allLeagues = data.map(function(d){
+    var all_divisions = data.map(function(d){
     	return d.newDiv;
     })
-
-    var leagues = d3.set(allLeagues).values(); //finds unique values from an array
+    var unique_divisions = d3.set(all_divisions).values(); //finds unique values from an array
 
     var button = chartContainer.selectAll(".user-nav-button")
-	    .data(leagues)
+	    .data(unique_divisions)
 	    .enter()
 	    .append("button")
 	    .attr("class", "user-nav-button")
 	    .text(function(d){
-	    	return d;
+	    	return d + " !";
 	    })
 	    .on("click", function(d){
-	    	console.log(d)
-	    	//updateDots(d);
+	    	updateChart(d);
     });
 
 	var svg = d3.select("body").append("svg")
@@ -138,5 +136,8 @@ function ready(err, data) {
             return lineGenerator(d.values); //values for each country
         });
 
+    function updateChart(newdiv){
+    	console.log("I clicked " + newdiv)
+    }
 }
 </script>
