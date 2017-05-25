@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+
+ body {
+        font: 10px arial sans;
+    }
+
+    svg {
+        border: 1px solid #f0f;
+        /*overflow: visible;*/
+    }
+
+    .axis line { 
+  	stroke: #d0d0d0;
+  	stroke-dasharray: 4px 4px;
+  }
+  .g-chart-container {
+      margin: 30px auto 30px auto;
+      text-align: center;
+  }
+
+  path.domain {
+      display: none;
+  }
+</style>
+
+<body>
+	<h1>Chart</h1>
+	<div class="g-chart-container"></div>
+
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+
+var chartContainer = d3.select(".g-chart-container");
+
+var margin = {top: 5, right: 10, bottom: 20, left: 40};
+var w = 800 - margin.left - margin.right,
+    h = 400 - margin.top - margin.bottom;
+
+d3.csv("games.csv", ready);
+
+function ready(err, data) {
+    if (err) throw "error loading data";
+		window.data = data;    
+    	var parseDate = d3.timeParse("%Y-%m-%d"); //I give the latter, timeParse gives me a date
+		data.forEach(function(d) {
+			d.pct = +d.pct; //turn pct into a number
+			d.newDate = parseDate(d.date_str2); //new column
+			//console.log(d.newDate.getMonth());
+			});
+
+	var svg = d3.select("body").append("svg")
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+      	.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	var xscale = d3.scaleTime()
+        .domain(d3.extent(data, function(d) {
+        	return d.newDate;
+        }))
+        .range([0,w]);
+
+    var yscale = d3.scaleLinear()
+        .domain([0.2,0.8])
+        .range([h,0]);
+
+    var xAxis = d3.axisBottom()
+        .scale(xscale);
+
+    var yAxis = d3.axisLeft()
+    	.tickFormat(d3.format(".3f")) //baseball formatting
+        .scale(yscale);
+
+    svg.append("g")
+        .attr("class", "xaxis axis")
+        .attr('transform', 'translate(0, ' + h +')')
+        .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "yaxis axis")
+        .call(yAxis);
+}
+</script>
