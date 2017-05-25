@@ -52,6 +52,7 @@ function ready(err, data) {
 			d.pct = +d.pct; //turn pct into a number
 			d.newDate = parseDate(d.date_str2); //new column
 			//console.log(d.newDate.getMonth());
+			d.newDiv = d.league + "-" + d.division[0].toUpperCase();
 			});
 
 	var svg = d3.select("body").append("svg")
