@@ -24,6 +24,12 @@
   path.domain {
       display: none;
   }
+   .team-path {
+  	stroke: steelblue;
+  	stroke-width: 2;
+  	fill: none;
+  }
+
 </style>
 
 <body>
@@ -55,6 +61,11 @@ function ready(err, data) {
 			d.newDiv = d.league + "-" + d.division[0].toUpperCase();
 			});
 
+    var al_central = data.filter(function(d) {
+        return d.newDiv == "AL-C";
+    }); //this is a new array of just AL-C Data
+    //console.log(al_central);
+
 	var svg = d3.select("body").append("svg")
         .attr("width", w + margin.left + margin.right)
         .attr("height", h + margin.top + margin.bottom)
@@ -68,8 +79,20 @@ function ready(err, data) {
         .range([0,w]);
 
     var yscale = d3.scaleLinear()
-        .domain([0.2,0.8])
+        .domain([0,1])
         .range([h,0]);
+
+	var lineGenerator = d3.line()
+		.x(function(d){
+			return xscale(d.newDate);
+	   })
+		.y(function(d) {
+	 		return yscale(d.pct);
+	   });
+
+    dataByDivision = d3.nest()
+        .key(function(d) { return d.team; }) //first level nest is by team
+        .entries(al_central);
 
     var xAxis = d3.axisBottom()
         .scale(xscale);
@@ -86,5 +109,15 @@ function ready(err, data) {
     svg.append("g")
         .attr("class", "yaxis axis")
         .call(yAxis);
+
+    var teamPath = svg.selectAll(".team-path") //another data join so I can get a different value array by country
+   		.data(dataByDivision)
+        .enter()
+        .append("path")
+        .attr("class", "team-path")
+        .attr("d", function(d) {
+            return lineGenerator(d.values); //values for each country
+        });
+
 }
 </script>
