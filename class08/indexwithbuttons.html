@@ -3,8 +3,8 @@
 
 <style type="text/css">
 
- body {
-        font: 10px arial sans;
+ 	body {
+    	font: 10px arial sans;
     }
 
     svg {
@@ -15,20 +15,22 @@
     .axis line { 
   	stroke: #d0d0d0;
   	stroke-dasharray: 4px 4px;
-  }
-  .g-chart-container {
-      margin: 30px auto 30px auto;
-      text-align: center;
-  }
+  	}
 
-  path.domain {
-      display: none;
-  }
+	.g-chart-container {
+	    margin: 30px auto 30px auto;
+	    text-align: center;
+	}
+
+  	path.domain {
+    	display: none;
+  	}
+
    .team-path {
-  	stroke: steelblue;
-  	stroke-width: 2;
-  	fill: none;
-  }
+	  	stroke: steelblue;
+	  	stroke-width: 2;
+	  	fill: none;
+  	}
 
 </style>
 
@@ -52,20 +54,19 @@ d3.csv("games.csv", ready);
 
 function ready(err, data) {
     if (err) throw "error loading data";
-		window.data = data;    
-    	var parseDate = d3.timeParse("%Y-%m-%d"); //I give the latter, timeParse gives me a date
-		data.forEach(function(d) {
-			d.pct = +d.pct; //turn pct into a number
-			d.newDate = parseDate(d.date_str2); //new column
-			//console.log(d.newDate.getMonth());
-			d.newDiv = d.league + "-" + d.division[0].toUpperCase();
-			});
+	window.data = data;    
+	var parseDate = d3.timeParse("%Y-%m-%d"); //I give the latter, timeParse gives me a date
+	data.forEach(function(d) {
+		d.pct = +d.pct; //turn pct into a number
+		d.newDate = parseDate(d.date_str2); //new column
+		d.newDiv = d.league + "-" + d.division[0].toUpperCase();
+		});
 
-
-    var all_divisions = data.map(function(d){
+    var all_divisions = data.map(function(d){ //returns all of my new divisions in an array
     	return d.newDiv;
     })
-    var unique_divisions = d3.set(all_divisions).values().sort(); //finds unique values from an array
+
+    var unique_divisions = d3.set(all_divisions).values().sort(); //finds unique values from an array and puts them in an array
 
     var button = chartContainer.selectAll(".user-nav-button")
 	    .data(unique_divisions)
@@ -127,10 +128,9 @@ function ready(err, data) {
     	console.log("I clicked " + league_div)
 
     	var thisDiv = data.filter(function(d) {
-        return d.newDiv == league_div;
-    		}); //this is a new array of just AL-C Data
-    //console.log(al_central);
-
+        	return d.newDiv == league_div;
+    	}); //this is a new array of just data for this league_div (which is a newDiv)
+    	console.log(thisDiv);
     	dataByDivision = d3.nest()
 	        .key(function(d) {
 	        	return d.team;
@@ -146,17 +146,18 @@ function ready(err, data) {
 		    .remove()
 
 		    teamPath.transition()
-		    .style("stroke", "purple")
+		    .style("stroke", "#d0d0d0")
  			.attr("d", function(d) {
-		        return lineGenerator(d.values); //values for each country
+		        return lineGenerator(d.values); //values for each team
 		    });
 
 		    teamPath.enter()
 		        .append("path")
 		        .attr("class", "team-path")
 		        .attr("d", function(d) {
-		            return lineGenerator(d.values); //values for each country
+		            return lineGenerator(d.values); //values for each team
 		        });
     }
 }
+
 </script>

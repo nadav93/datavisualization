@@ -53,11 +53,11 @@ d3.csv("games.csv", ready);
 function ready(err, data) {
     if (err) throw "error loading data";
 		window.data = data;    
-    	var parseDate = d3.timeParse("%Y-%m-%d"); //I give the latter, timeParse gives me a date
+    var parseDate = d3.timeParse("%Y-%m-%d"); //I give the latter, timeParse gives me a date
+
 		data.forEach(function(d) {
 			d.pct = +d.pct; //turn pct into a number
 			d.newDate = parseDate(d.date_str2); //new column
-			//console.log(d.newDate.getMonth());
 			d.newDiv = d.league + "-" + d.division[0].toUpperCase();
 			});
 
@@ -66,24 +66,24 @@ function ready(err, data) {
     }); //this is a new array of just AL-C Data
     //console.log(al_central);
 
-    var allLeagues = data.map(function(d){
-    	return d.newDiv;
-    })
+    // var allLeagues = data.map(function(d){
+    // 	return d.newDiv;
+    // })
 
-    var leagues = d3.set(allLeagues).values(); //finds unique values from an array
+    // var leagues = d3.set(allLeagues).values(); //finds unique values from an array
 
-    var button = chartContainer.selectAll(".user-nav-button")
-	    .data(leagues)
-	    .enter()
-	    .append("button")
-	    .attr("class", "user-nav-button")
-	    .text(function(d){
-	    	return d;
-	    })
-	    .on("click", function(d){
-	    	console.log(d)
-	    	//updateDots(d);
-    });
+    // var button = chartContainer.selectAll(".user-nav-button")
+	   //  .data(leagues)
+	   //  .enter()
+	   //  .append("button")
+	   //  .attr("class", "user-nav-button")
+	   //  .text(function(d){
+	   //  	return d;
+	   //  })
+	   //  .on("click", function(d){
+	   //  	console.log(d)
+	   //  	//updateDots(d);
+    // });
 
 	var svg = d3.select("body").append("svg")
         .attr("width", w + margin.left + margin.right)
