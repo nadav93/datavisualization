@@ -7,8 +7,13 @@ svg {
   border: 1px solid #f0f;
 }
 
-.county-path {
-  stroke: red;
+.counties {
+  stroke: #d0d0d0;
+  fill: none;
+}
+
+.has-guns {
+  fill: #2471A3;
 }
 
 </style>
@@ -42,6 +47,11 @@ d3.queue()
 function ready(err, data, us) {
   if (err) throw "error loading data";
 
+  gunsByFips = {}; //if I give you a fips code, I want you to give me back the # of guns
+  data.forEach(function(d){
+    gunsByFips[d.fipstxt] = +d.count3;
+  });
+
   var counties = topojson.feature(us, us.objects.counties); //returns an array of just the counties data from the us data
 
   var geoPathGenerator = d3.geoPath()
@@ -52,7 +62,12 @@ function ready(err, data, us) {
       .data(counties.features)
       .enter().append("path")
       .attr("class", "counties")
-      .attr("d", function(d) { return geoPathGenerator(d); });
+      .attr("d", function(d) { return geoPathGenerator(d); })
+      .classed("has-guns", function(d) {
+        var guns = gunsByFips[d.id]; //returns a class of has-guns to anything that has guns > 0
+        return guns > 0;
+      });
+
 }
 
 </script>
