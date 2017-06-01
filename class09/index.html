@@ -1,88 +1,58 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 
-<style type="text/css">
-  /*css to go here*/
+<style>
 
-  svg {
-    border: 1px solid red; /*to keep track of the svg border... optional*/
-  }
+svg {
+  border: 1px solid #f0f;
+}
 
-  .axis line { 
-    stroke: #d0d0d0;
-    stroke-dasharray: 4px 4px;
-  }
-
-  .rectangle {
-    fill: white;
-  }
+.county-path {
+  stroke: red;
+}
 
 </style>
 
 <body>
-  <h1>Chicago</h1>
-  <div class="g-chart-container"></div>
-
 </body>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+
+
 <script>
 
-var margin = {top: 5, right: 30, bottom: 20, left: 40};
+var margin = {top: 20, right: 10, bottom: 20, left: 10};
 
-var w = 800 - margin.left - margin.right,
-    h = 400 - margin.top - margin.bottom;
+var width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
-var xscale = d3.scaleLinear()
-  .domain([1970,2020]) //project this from data land...
-  .range([0,w])//to pixel land
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var yscale = d3.scaleLinear()
-  .domain([0,45000])
-  .range([h,0])
-
-var xaxis = d3.axisBottom() //means the ticks will go below rather than above
-  .scale(xscale)
-  .tickFormat(d3.format("d"))
-  .tickSize(-h);
-
-var yaxis = d3.axisLeft()
-  .scale(yscale)
-  .tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
-
-var chart = d3.select("body").append("svg")
-    .attr("width", w + margin.left + margin.right)
-    .attr("height", h + margin.top + margin.bottom)
-  .append("g") //it's actually a g within an svg. technically a reference to my g from here on out
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); //?
-
-d3.queue() //every new file gets a .defer
+d3.queue()
   .defer(d3.csv, "guns-history.csv")
   .defer(d3.json, "us.json")
-  .await(ready);//when it's all done.. function I call is 'ready'
+  .await(ready); //only once all the data is loaded
 
-function ready(err, data, us){
+function ready(err, data, us) {
   if (err) throw "error loading data";
 
-  chart.append("rect")
-    .attr("class", "rectangle")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", w)
-      .attr("height", h);
-      console.log("data", data);
-      console.log("us", us);
-  // //rendering my axis ticks and labels:
-  // chart.append("g") //"g" is the parent group for the ticks
-  //   .attr("class", "axis") //would give them all a class called axis
-  //   .call(xaxis)
-  //   .attr("transform", "translate(0," + h + ")"); //moves the x axis down
+  var counties = topojson.feature(us, us.objects.counties); //returns an array of just the counties data from the us data
 
-  // chart.append("g") //"g" stands for group
-  //   .attr("class", "axis") //would give them all a class
-  //   .call(yaxis);
-    
+  var geoPathGenerator = d3.geoPath()
+      .projection(d3.geoAlbersUsa() //type of rendering that moves Alaska, Hawaii
+        .fitSize([width, height], counties));
 
-  }
+  var countyPaths = svg.selectAll(".counties")
+      .data(counties.features)
+      .enter().append("path")
+      .attr("class", "counties")
+      .attr("d", function(d) { return geoPathGenerator(d); });
+}
+
 </script>
