@@ -34,11 +34,15 @@ var margin = {top: 20, right: 10, bottom: 20, left: 10};
 var width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+color = d3.scaleThreshold()
+  .domain([3, 6, 9, 12, 50])
+  .range(["#eff3ff", "#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"]);
+
 var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
   .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.queue()
   .defer(d3.csv, "guns-history.csv")
@@ -48,7 +52,7 @@ d3.queue()
 function ready(err, data, us) {
   if (err) throw "error loading data";
 
-  gunsByFips = {}; //if I give you a fips code, I want you to give me back the # of guns
+  gunsByFips = {}; //this will be a dict where if I give you a fips code, I want you to give me back the # of guns
   data.forEach(function(d){
     gunsByFips[d.FIPS] = +d.count3;
   });
@@ -64,10 +68,11 @@ function ready(err, data, us) {
       .enter().append("path")
       .attr("class", "counties")
       .attr("d", function(d) { return geoPathGenerator(d); })
-      .classed("has-guns", function(d) {
-        var guns = gunsByFips[d.id]; //returns a class of has-guns to anything that has guns > 0
-        return guns > 0;
-      });
+      .style("fill", function(d) { return color(gunsByFips[d.id]); });
+      // .classed("has-guns", function(d) {
+      //   var guns = gunsByFips[d.id]; //returns a class of has-guns to anything that has guns > 0
+      //   return guns > 0;
+      // });
 
 }
 
