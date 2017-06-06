@@ -12,10 +12,6 @@ svg {
   fill: none;
 }
 
-.has-guns {
-  fill: #2471A3;
-}
-
 </style>
 
 <body>
@@ -75,14 +71,11 @@ function ready(err, drought, us) {
       .enter().append("path")
       .attr("class", "climate-divisions")
       .attr("d", function(d) { return geoPathGenerator(d); })
-      // .classed("has-guns", function(d) {
-      //   var guns = droughtSeverityByID[d.FIPS_CD]; //returns a class of has-guns to anything that has guns > 0
-      //   return guns > 0;
-      // });
       .style("fill", function(d) {
-        console.log(d, d.properties.CLIMDIV);
+        console.log(d, d.properties.CLIMDIV); //these are feature collections.
         var droughtSeverity = droughtSeverityByID[d.properties.CLIMDIV];
-        return color(droughtSeverity); });
+        return color(droughtSeverity);
+      });
 }
 
 </script>
