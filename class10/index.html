@@ -30,9 +30,10 @@ var width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 color = d3.scaleThreshold()
-  .domain([-4, -3, -2, 2, 3, 4])
-  .range(["#8c510a", "#d8b365", "#f6e8c3", "#f5f5f5", "#c7eae5", "#5ab4ac", "#01665e"]); //I chose diverging color from color brewer
+  .domain([-4, -3, -2, 2, 3, 4]) //according to the government
+  .range(["#c51b7d", "#e9a3c9", "#fde0ef", "#f7f7f7", "#e6f5d0", "#a1d76a", "#4d9221"]); //I chose 'diverging color' from color brewer. I need one more color than the domain.
 
+  //http://www.cpc.ncep.noaa.gov/products/analysis_monitoring/regional_monitoring/palmer.gif according to gov, pink is extreme drought and green is extremely moist
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
