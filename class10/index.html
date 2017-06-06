@@ -41,19 +41,27 @@ var svg = d3.select("body").append("svg")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.queue()
-  .defer(d3.csv, "guns-history.csv")
-  .defer(d3.json, "us.json")
+  .defer(d3.csv, "tidy-drought-data.csv")
+  .defer(d3.json, "climate-divisions.json")
   .await(ready); //only once all the data is loaded
 
-function ready(err, data, us) {
+function ready(err, drought, us) {
   if (err) throw "error loading data";
+  console.log(us)
 
-  gunsByFips = {}; //if I give you a fips code, I want you to give me back the # of guns
-  data.forEach(function(d){
-    gunsByFips[d.FIPS] = +d.count3;
+  var thisYear =  drought.filter(function(d){ //filtering
+    return d.year == "2013";
   });
-console.log(us);
-  var counties = topojson.feature(us, us.objects.counties); //returns an array of just the counties data from the us data
+
+  droughtSeverityByID = {}; //if I give you a code, I want you to give me back the drought severity
+  thisYear.forEach(function(d){
+    droughtSeverityByID[d.id] = d.val;
+  });
+  
+  console.log(droughtSeverityByID)
+
+  console.log(thisYear);
+  var counties = topojson.feature(us, us.objects.GIS); //returns an array of just the counties data from the us data
 
   var geoPathGenerator = d3.geoPath()
       .projection(d3.geoAlbersUsa() //type of rendering that moves Alaska, Hawaii
@@ -64,10 +72,10 @@ console.log(us);
       .enter().append("path")
       .attr("class", "counties")
       .attr("d", function(d) { return geoPathGenerator(d); })
-      .classed("has-guns", function(d) {
-        var guns = gunsByFips[d.id]; //returns a class of has-guns to anything that has guns > 0
-        return guns > 0;
-      });
+      // .classed("has-guns", function(d) {
+      //   var guns = gunsByFips[d.id]; //returns a class of has-guns to anything that has guns > 0
+      //   return guns > 0;
+      // });
 
 }
 
