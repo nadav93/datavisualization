@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+
+    body {
+        font: 10px arial sans;
+    }
+
+    h1 {
+        font-family: arial;
+    }
+
+  .axis line  {
+      stroke: #fff;
+      stroke-width: 1;
+  }
+
+  path.domain {
+      display: none;
+  }
+
+  .bg-screen {
+      fill: #f0f0f0;
+  }
+
+  circle {
+      fill: #000;
+  }
+
+</style>
+
+<body>
+    <h1>Barley</h1>
+</body>
+
+<!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+<script src="d3-jetpack.js"></script>
+
+<script>
+
+var margin = {top: 5, right: 8, bottom: 20, left: 30};
+
+var w = 500 - margin.left - margin.right,
+    h = 400 - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("quartet.tsv", ready);
+
+function ready(err, data) {
+    if (err) throw "error loading data";
+
+    // filter out just the group you want.
+    var groupII = data.filter(function(d) {
+        return d.group == "II";
+    });
+
+    var xscale = d3.scaleLinear()
+        .domain([0,20])
+        .range([0,w]);
+
+    var yscale = d3.scaleLinear()
+        .domain([0,10])
+        .range([h,0]);
+
+    var xaxis = d3.axisBottom()
+        .scale(xscale)
+        .tickSize(h);
+
+    var yaxis = d3.axisLeft()
+        .scale(yscale)
+        .tickSize(w);
+
+    svg.append("rect")
+        .attr('class', 'bg-screen')
+        .attr("width", w)
+        .attr("height", h);
+
+    svg.append("g")
+        .attr("class", "axis")
+        .call(xaxis);
+
+    svg.append("g")
+        .attr("class", "axis")
+        .attr("transform", "translate(" + w + ",0)")
+        .call(yaxis);
+
+    var agroup = svg.selectAll(".a-group")
+        .data(groupII)
+        .enter()
+        .append("g")
+        .attr("class", "a-group")
+        .attr("transform", function(d) {
+            return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
+        });
+
+    agroup.append("circle")
+        .attr('r', 4);
+
+    agroup.append("text")
+        .text(function(d) {
+            return d.x + "," + d.y;
+        })
+        .attr("dx", 8)
+        .attr("dy", -8);
+
+}
+
+</script>
