@@ -53,8 +53,9 @@ d3.queue()
   .defer(d3.tsv, "dates.tsv")
   .await(ready);
 
-var timeParser = d3.timeParse("%m/%d/%y"), //takes a string and turns it into a date
-timeFormatter = d3.timeFormat("%Y-%m-%d");//takes a date and turns it into a string
+//we want to go 4/27/17 ==> 2010-09-21 in terms of format. so we go string => date =>correct string format
+var timeParser = d3.timeParse("%m/%d/%y"), //takes a string of that format and turns it into a date
+timeFormatter = d3.timeFormat("%Y-%m-%d");//takes a date and turns it into a string of the format I decide
 
 function ready(error, pc) {
   if (error) throw error;
