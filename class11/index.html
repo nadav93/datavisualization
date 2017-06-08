@@ -66,6 +66,12 @@ var svg = d3.select("body").append("svg")
         .append("g")
         .translate([margin.left,margin.top]);
 
+// var c = d3.conventions({
+//   margin: {top: 20, right: 20, bottom: 30, left: 40},
+//   width:  500,
+//   height: 400,
+// });
+
 d3.tsv("quartet.tsv", ready);
 
 function ready(err, data) {
