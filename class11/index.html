@@ -28,6 +28,20 @@
       fill: #000;
   }
 
+.tooltip {
+  top: -1000px;
+  position: fixed;
+  padding: 10px;
+  background: rgba(255, 255, 255, .90);
+  border: 1px solid lightgray;
+  pointer-events: none;
+}
+.tooltip-hidden{
+  opacity: 0;
+  transition: all .3s;
+  transition-delay: .1s;
+}
+
 </style>
 
 <body>
@@ -39,6 +53,8 @@
 
 <script>
 
+d3.select('body').selectAppend('div.tooltip');
+
 var margin = {top: 5, right: 8, bottom: 20, left: 30};
 
 var w = 500 - margin.left - margin.right,
@@ -48,7 +64,7 @@ var svg = d3.select("body").append("svg")
         .attr("width", w + margin.left + margin.right)
         .attr("height", h + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .translate([margin.left,margin.top]);
 
 d3.tsv("quartet.tsv", ready);
 
@@ -76,28 +92,26 @@ function ready(err, data) {
         .scale(yscale)
         .tickSize(w);
 
-    svg.append("rect")
-        .attr('class', 'bg-screen')
+    svg.append("rect.bg-screen")
         .attr("width", w)
         .attr("height", h);
 
-    svg.append("g")
-        .attr("class", "axis")
+    svg.append("g.axis")
+        //.attr("class", "axis") jetpack let me swap this
         .call(xaxis);
 
-    svg.append("g")
-        .attr("class", "axis")
-        .attr("transform", "translate(" + w + ",0)")
+    svg.append("g.axis")
+        .translate([w,0])
         .call(yaxis);
 
-    var agroup = svg.selectAll(".a-group")
+    var agroup = svg.selectAll("g.a-group")
         .data(groupII)
         .enter()
-        .append("g")
-        .attr("class", "a-group")
-        .attr("transform", function(d) {
-            return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
+        .append("g.a-group")
+        .translate(function(d){return[xscale(d.x),yscale(d.y)];
         });
+
+    agroup.call(d3.attachTooltip);
 
     agroup.append("circle")
         .attr('r', 4);
