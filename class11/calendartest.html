@@ -15,7 +15,7 @@ var width = 960,
 
 var svg = d3.select("body")
   .selectAll("svg")
-  .data(d3.range(2009, 2014))
+  .data(d3.range(2012, 2017))
   .enter().append("svg")
     .attr("width", width)
     .attr("height", height)
@@ -51,20 +51,28 @@ svg.append("g")
 
 d3.queue()
   .defer(d3.csv, "dji.csv")
+  .defer(d3.tsv, "dates.tsv")
   .await(ready);
 
-function ready(error, csv) {
+var timeParser = d3.timeParse("%m/%d/%y"), //takes a string and turns it into a date
+timeFormatter = d3.timeFormat("%Y-%m-%d");//takes a date and turns it into a string
+
+function ready(error, csv, pc) {
   if (error) throw error;
+  pc.forEach(function(d){
+    d.Date = timeFormatter(timeParser(d.date_c)); //makes a copy of date_c called date
+  });
+  console.log(pc)
 
   var data = d3.nest()
       .key(function(d) { return d.Date; })
       //.rollup(function(d) { return (d[0].Close - d[0].Open) / d[0].Open; })
-    .object(csv);
+    .object(pc);
 
     console.log(data);
 
   rect.filter(function(d) { return d in data; })
-      .attr("fill", "#1B4F72")
+      .attr("fill", "#F4D03F")
     .append("title")
       .text(function(d) { return d + ": " + data[d]; });
 };
