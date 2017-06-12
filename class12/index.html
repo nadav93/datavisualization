@@ -27,7 +27,8 @@ d3.tsv("trumpdata.tsv", function(d) {
   var root = d3.hierarchy({children: classes})
       .sum(function(d) { return d.min_assets; })
       .each(function(d) {
-        if (id = d.data.id) {
+        console.log(d);
+        if (id = d.data.name) {
           var id, i = id.lastIndexOf(".");
           d.id = id;
           d.package = id.slice(0, i);
