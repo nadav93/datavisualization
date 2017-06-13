@@ -19,8 +19,8 @@ var pack = d3.pack()
     .padding(1.5);
 
 var textSizer = d3.scaleThreshold()
-    .domain([517013, 1000000, 10000000, 679783484])
-    .range([10, 15, 20, 25, 30]);
+    .range([10, 15, 20, 25, 30])
+    .domain([100000, 1000000, 10000000, 50000000]);
 
 d3.tsv("trumpdata.tsv", function(d) {
   var n = d.name.split(" ");
@@ -54,10 +54,10 @@ d3.tsv("trumpdata.tsv", function(d) {
         })
       .style("fill", function(d){
         if (d.data.cabinet == "y"){
-          return ("#d0d0d0");
+          return ("orange");
         }
         else
-          return ("orange");
+          return ("#d0d0d0");
       })
       
 
@@ -67,8 +67,7 @@ d3.tsv("trumpdata.tsv", function(d) {
       //.attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
     })
     .attr("font-size", function(d){
-      console.log(d);
-      return textSizer(d.value);
+      return d.r/2;
     });
 
   node.append("text")
