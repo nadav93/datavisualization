@@ -21,7 +21,6 @@ var pack = d3.pack()
 d3.tsv("trumpdata.tsv", function(d) {
   var n = d.name.split(" ");
     d.cleanname = n[n.length - 1];
-    console.log(d.cleanname);
   d.min_assets = +d.min_assets;
   if (d.min_assets) return d;
 }, function(error, classes) {
@@ -46,12 +45,23 @@ d3.tsv("trumpdata.tsv", function(d) {
 
   node.append("circle")
       .attr("id", function(d) { return d.id; })
-      .attr("r", function(d) { return d.r; })
-      .style("fill", "#d0d0d0")
+      .attr("r", function(d) {
+        return d.r; 
+        })
+      //.style("fill", "#d0d0d0")
+      .style("fill", function(d){
+        if (d.data.cabinet == "y"){
+          return ("#d0d0d0");
+        }
+        else
+          return ("orange");
+        console.log(d.data.cabinet);
+      })
+      
 
   node.append("text")
     .text(function(d){
-      return d.data.cleanname + " $" + parseFloat(d.value).toFixed(2);
+      return d.data.cleanname + " $" + parseFloat(d.value).toFixed(1);
       //.attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
     });
 
