@@ -7,16 +7,6 @@
   	border: 1px solid #f0f;
   }
 
-  .yr-1931 {
-  	fill: #0080FF;
-  	opacity: .5;
-  }
-
-  .yr-1932 {
-  	fill: #FA8072;
-  	opacity: .9;
-  }
-
 </style>
 
 <body>
@@ -33,13 +23,13 @@ var margin = {top: 5, right: 10, bottom: 20, left: 20};
 var w = 600 - margin.left - margin.right,
     h = 400 - margin.top - margin.bottom;
 
-var xscale = d3.scaleBand()
-	.domain(['Manchuria','Glabron','Svansota','Velvet','Trebi','Peatland', 'No. 457', 'No. 475', "No. 462", "Wisconsin No. 38"]).padding(0.1)
-	.range([0, w]); //projecting to pixel land
+var xscale = d3.scaleLinear() //created to use later
+	.domain([0,20]) //project this from data land...
+	.range([0,w])//to pixel land
 
-var yscale = d3.scaleLinear()
-	.domain([0,68])
-	.range([h,0]);
+var yscale = d3.scaleLinear() //created to use later
+	.domain([0,10])
+	.range([h,0])
 
 var xaxis = d3.axisBottom() //means the ticks will go below rather than above
 		.scale(xscale) //needs to know scale to project along svg
@@ -48,11 +38,11 @@ var yaxis = d3.axisLeft()
 		.scale(yscale)
 		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
 
-/*var chart = d3.select("body").append("svg")
+var chart = d3.select("body").append("svg")
     .attr("width", w + margin.left + margin.right)
     .attr("height", h + margin.top + margin.bottom)
 	.append("g") //it's actually a g within an svg. technically a reference to my g from here on out
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); //?*/
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.csv("revised_sc_votes.csv", ready);
 function ready(err, data){
@@ -62,7 +52,11 @@ function ready(err, data){
 	var votesByCase = d3.nest() //returns an array of the 6 sites
   		.key(function(d) { return d.caseName; })
   		.entries(data);
-  	console.log(votesByCase);
+
+  	console.log(votesByCase); //all cases
+  	console.log(votesByCase[0]); //one case
+  	console.log(votesByCase[0].values[0]);  	  		  	  		
+  	console.log(votesByCase[0].values[0].caseName);
 /*
 	var yieldsBySite = d3.nest() //returns an array of the 6 sites
   		.key(function(d) { return d.site; })
