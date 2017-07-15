@@ -47,19 +47,24 @@ var chart = d3.select("body").append("svg")
 d3.csv("revised_sc_votes.csv", ready);
 function ready(err, data){
 	if (err) throw "error loading data";
-	console.log(data);
+	//console.log(data);
 
 	var votesByCase = d3.nest() //returns an array of the 6 sites
   		.key(function(d) { return d.caseName; })
   		.entries(data);
 
-  	console.log(votesByCase); //all cases
-  	console.log(votesByCase[0]); //one case
-  	console.log(votesByCase[0].values[0]);  	  		  	  		
-  	console.log(votesByCase[0].values[0].caseName);
+  	 console.log(votesByCase); //all cases
+  	// console.log(votesByCase[0]); //one case
+  	// console.log(votesByCase[0].values[0]);  	  		  	  		
+  	// console.log(votesByCase[0].values[0].caseName);
 
   	votesByCase.forEach(function(d){
   		console.log(d.key + "!");
+  		console.log(d.values + "!!");
+  		d.values.forEach(function(z){
+  			console.log(z.justiceName); //for each justice
+  		});
+  		//make new datum with just relevant stuff
   	});
 
 	var agroup = chart.selectAll("g.a-group") //grab all items that have this a-group characteristic in the svg
@@ -68,7 +73,7 @@ function ready(err, data){
 		.append("g") //append those circles
 		.attr("class", "a-group")
 		.attr("transform", function(d) { //d is the element at that index
-			console.log(d.values[0].caseName)
+			//console.log(d.values[0].caseName)
 			return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")"; //is this me scaling my dots
 		});
 
