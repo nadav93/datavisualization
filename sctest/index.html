@@ -11,6 +11,7 @@
 
 <body>
 	<h1>SC Data</h1>
+    <div class="g-chart-container"></div>
 
 </body>
 
@@ -20,29 +21,10 @@
 
 var margin = {top: 5, right: 10, bottom: 20, left: 20};
 
+var chartContainer = d3.select(".g-chart-container");
+
 var w = 600 - margin.left - margin.right,
     h = 400 - margin.top - margin.bottom;
-
-var xscale = d3.scaleLinear() //created to use later
-	.domain([0,20]) //project this from data land...
-	.range([0,w])//to pixel land
-
-var yscale = d3.scaleLinear() //created to use later
-	.domain([0,10])
-	.range([h,0])
-
-var xaxis = d3.axisBottom() //means the ticks will go below rather than above
-		.scale(xscale) //needs to know scale to project along svg
-
-var yaxis = d3.axisLeft()
-		.scale(yscale)
-		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
-
-var chart = d3.select("body").append("svg")
-    .attr("width", w + margin.left + margin.right)
-    .attr("height", h + margin.top + margin.bottom)
-	.append("g") //it's actually a g within an svg. technically a reference to my g from here on out
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.csv("revised_sc_votes.csv", ready);
 function ready(err, data){
@@ -58,14 +40,35 @@ function ready(err, data){
   	// console.log(votesByCase[0].values[0]);  	  		  	  		
   	// console.log(votesByCase[0].values[0].caseName);
 
-  	votesByCase.forEach(function(d){
-  		console.log(d.key + "!");
-  		console.log(d.values + "!!");
-  		d.values.forEach(function(z){
-  			console.log(z.justiceName); //for each justice
+  	votesByCase.forEach(function(d){ //looping through cases
+  		console.log(d.key + "!"); //case name
+  		console.log(d.values + "!!"); 
+  		d.values.forEach(function(z){ //looping through each justice for the individual cases
+  			console.log(z.justiceName + " voted: " + z.direction); //each justice who voted and how they voted
+  			//z.newVar = z.justiceName + "!!!"; //making new data with relevant stuff
   		});
-  		//make new datum with just relevant stuff
   	});
+
+  	var xscale = d3.scaleLinear() //created to use later
+		.domain([0,20]) //project this from data land...
+		.range([0,w])//to pixel land
+
+	var yscale = d3.scaleLinear() //created to use later
+		.domain([0,10])
+		.range([h,0])
+
+	var xaxis = d3.axisBottom() //means the ticks will go below rather than above
+		.scale(xscale) //needs to know scale to project along svg
+
+	var yaxis = d3.axisLeft()
+		.scale(yscale)
+		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
+
+	var chart = d3.select("body").append("svg")
+	    .attr("width", w + margin.left + margin.right)
+	    .attr("height", h + margin.top + margin.bottom)
+		.append("g") //it's actually a g within an svg. technically a reference to my g from here on out
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 	var agroup = chart.selectAll("g.a-group") //grab all items that have this a-group characteristic in the svg
 		.data(votesByCase) //here's my data that I am binding to the element
