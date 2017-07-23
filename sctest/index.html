@@ -64,23 +64,35 @@ function ready(err, data){
 		.scale(yscale)
 		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
 
-	var chart = d3.select("body").append("svg")
-	    .attr("width", w + margin.left + margin.right)
-	    .attr("height", h + margin.top + margin.bottom)
-		.append("g") //it's actually a g within an svg. technically a reference to my g from here on out
-	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-	var agroup = chart.selectAll("g.a-group") //grab all items that have this a-group characteristic in the svg
+	var agroup = chartContainer.selectAll(".a-group") //grab all items that have this a-group characteristic in the svg
 		.data(votesByCase) //here's my data that I am binding to the element
 		.enter() //data should enter those elemnts
-		.append("g") //append those circles
+		.append("div") //append those circles
 		.attr("class", "a-group")
+		.attr("id", function(d){return d.key;})
 		.attr("transform", function(d) { //d is the element at that index
-			//console.log(d.values[0].caseName)
+			console.log("yo")
 			return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")"; //is this me scaling my dots
 		});
 
-		/*
+		agroup.append("h4")
+        .text(function(d) {
+        	return d.key;
+        });
+
+	var svg = agroup.append("svg")
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    /*var cutoffGroup = chartContainer.selectAll(".cutoff-group")
+        .data(dataByCutoffAndCountry)
+        .enter()
+        .append("div")
+        .attr("class", "cutoff-group")
+        .attr("id", (function(d) { return d.key; }));
+		
 		    dataByCutoffAndCountry = d3.nest()
         .key(function(d) { return d.cutoff; }) //first level nest is COPs {key: "cop5", values: array(23)}
         .key(function(d) { return d.country; }) //second level is by country
