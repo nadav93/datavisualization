@@ -86,14 +86,11 @@ function ready(err, data){
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var redCircle = svg.selectAll("circle") //select all the circles
-    .data(votesByCase)
-	.enter() //data should enter those elemnts
-	.append("circle") //append those circles
-	.attr("r", 30) //they need a radius of size 3
-	.attr("cx", 40)
-	.attr("fill", "red")
-	.attr("cy", 20)
+    var redCircle = svg.append("circle") //append those circles
+		.attr("r", 30) //they need a radius of size 3
+		.attr("cx", 40)
+		.attr("fill", "red")
+		.attr("cy", 20)
     /*var cutoffGroup = chartContainer.selectAll(".cutoff-group")
         .data(dataByCutoffAndCountry)
         .enter()
