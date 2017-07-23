@@ -31,7 +31,7 @@ function ready(err, data){
 	if (err) throw "error loading data";
 	//console.log(data);
 
-	var votesByCase = d3.nest() //returns an array of the 6 sites
+	var votesByCase = d3.nest() //returns an array of the cases
   		.key(function(d) { return d.caseName; })
   		.entries(data);
 
@@ -42,7 +42,7 @@ function ready(err, data){
 
   	votesByCase.forEach(function(d){ //looping through cases
   		console.log(d.key + "!"); //case name
-  		console.log(d.values + "!!"); 
+  		console.log(d.values + "!!");  //the justice votes within that case
   		d.values.forEach(function(z){ //looping through each justice for the individual cases
   			console.log(z.justiceName + " voted: " + z.direction); //each justice who voted and how they voted
   			//z.newVar = z.justiceName + "!!!"; //making new data with relevant stuff
@@ -86,6 +86,14 @@ function ready(err, data){
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    var redCircle = svg.selectAll("circle") //select all the circles
+    .data(votesByCase)
+	.enter() //data should enter those elemnts
+	.append("circle") //append those circles
+	.attr("r", 30) //they need a radius of size 3
+	.attr("cx", 40)
+	.attr("fill", "red")
+	.attr("cy", 20)
     /*var cutoffGroup = chartContainer.selectAll(".cutoff-group")
         .data(dataByCutoffAndCountry)
         .enter()
