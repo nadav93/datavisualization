@@ -99,20 +99,24 @@ function ready(err, data){
         return j.values; 
     })
     .enter()
-    .append("path")
+    .append("circle")
     .attr("class", function(j){
       console.log("FYI: " + j.justiceName + " direction: " + j.direction + " and their vote was " + j.vote);
-      return "justice--vote " + j.slug;
+      return "justice--vote " + j.justiceName;
     })
+    .attr("r", 20) //they need a radius of size 3
+    .attr("cx", 40)
+    .attr("fill", "red")
+    .attr("cy", 40);
     // .attr("d", function(d) {
     //     return lineGenerator(d.values); //values for each country
     // });
 
-    var redCircle = svg.append("circle") //append those circles
-    .attr("r", 30) //they need a radius of size 3
-    .attr("cx", 40)
-    .attr("fill", "red")
-    .attr("cy", 40);
+    // var redCircle = svg.append("circle") //append those circles
+    // .attr("r", 30) //they need a radius of size 3
+    // .attr("cx", 40)
+    // .attr("fill", "red")
+    // .attr("cy", 40);
 }
 
 
