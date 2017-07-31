@@ -50,10 +50,26 @@ function ready(err, data){
   		});
   	});
 
-  	var xscale = d3.scaleLinear() //created to use later
-		.domain([0,20]) //project this from data land...
-		.range([0,w])//to pixel land
+// color = d3.scaleThreshold()
+//   .domain([3, 6, 9, 12, 50])
+//   .range(["#eff3ff", "#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"]);
 
+
+
+//   var COLORS = ['#c51b7d','#e9a3c9','#fde0ef','#f7f7f7','#e6f5d0','#a1d76a','#4d9221'];
+
+// var threshold = d3.scaleThreshold()
+//         .domain([-4, -3, -2, 2, 3, 4])
+//         .range(COLORS); 
+
+// var colorScale = d3.scaleSequential(d3.interpolateInferno)
+//     .domain([-10, 5]);
+
+
+  	var xscale = d3.scaleBand() //created to use later
+    .domain([0, 1, 2]).padding(0.1)
+    //.domain([0, 1, 2, ,'Glabron','Svansota','Velvet','Trebi','Peatland', 'No. 457', 'No. 475', "No. 462", "Wisconsin No. 38"]).padding(0.1)
+    .range([0,w])//to pixel land
 	var yscale = d3.scaleLinear() //created to use later
 		.domain([0,10])
 		.range([h,0])
@@ -107,7 +123,15 @@ function ready(err, data){
     .attr("r", 20) //they need a radius of size 3
     .attr("cx", 40)
     .attr("fill", "red")
-    .attr("cy", 40);
+    .attr("cy", function(j){
+      if(j.justiceName == "AScalia"){
+        return 50;
+      }
+      else
+      {
+        return 100;
+      }
+    });
     // .attr("d", function(d) {
     //     return lineGenerator(d.values); //values for each country
     // });
