@@ -24,7 +24,7 @@ var margin = {top: 5, right: 10, bottom: 20, left: 20};
 var chartContainer = d3.select(".g-chart-container");
 
 var w = 600 - margin.left - margin.right,
-    h = 400 - margin.top - margin.bottom;
+    h = 200 - margin.top - margin.bottom;
 
 d3.csv("revised_sc_votes.csv", ready);
 function ready(err, data){
@@ -35,7 +35,8 @@ function ready(err, data){
   		.key(function(d) { return d.caseName; })
   		.entries(data);
 
-  	 console.log(votesByCase); //all cases
+  	console.log(votesByCase); //all cases
+  	console.log(votesByCase.length);
   	// console.log(votesByCase[0]); //one case
   	// console.log(votesByCase[0].values[0]);  	  		  	  		
   	// console.log(votesByCase[0].values[0].caseName);
@@ -44,7 +45,7 @@ function ready(err, data){
   		console.log(d.key + "!"); //case name
   		console.log(d.values + "!!");  //the justice votes within that case
   		d.values.forEach(function(z){ //looping through each justice for the individual cases
-  			console.log(z.justiceName + " voted: " + z.direction + " and their vote was " + z.vote); //each justice who voted and how they voted
+  			console.log(z.justiceName + " direction: " + z.direction + " and their vote was " + z.vote); //each justice who voted and how they voted
   			//z.newVar = z.justiceName + "!!!"; //making new data with relevant stuff
   		});
   	});
@@ -57,12 +58,9 @@ function ready(err, data){
 		.domain([0,10])
 		.range([h,0])
 
-	var xaxis = d3.axisBottom() //means the ticks will go below rather than above
-		.scale(xscale) //needs to know scale to project along svg
-
-	var yaxis = d3.axisLeft()
-		.scale(yscale)
-		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
+    // function circleDrawer(z){
+  		// console.log("FYI: " + z.justiceName + " direction: " + z.direction + " and their vote was " + z.vote); //each justice who voted and how they voted
+    // }
 
 	var agroup = chartContainer.selectAll(".a-group") //grab all items that have this a-group characteristic in the svg
 		.data(votesByCase) //here's my data that I am binding to the element
@@ -77,6 +75,9 @@ function ready(err, data){
 
 		agroup.append("h4")
         .text(function(d) {
+        // 	d.values.forEach(function(z){
+        // 	circleDrawer(z);
+        // });
         	return d.key;
         });
 
@@ -86,13 +87,33 @@ function ready(err, data){
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var redCircle = svg.append("circle") //append those circles
-		.attr("r", 30) //they need a radius of size 3
-		.attr("cx", 40)
-		.attr("fill", "red")
-		.attr("cy", 20);
+	var xaxis = d3.axisBottom() //means the ticks will go below rather than above
+		.scale(xscale) //needs to know scale to project along svg
 
-	}
+	var yaxis = d3.axisLeft()
+		.scale(yscale)
+		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
+
+    var countryPath = svg.selectAll(".justice--vote")
+    .data(function(j) { 
+        return j.values; 
+    })
+    .enter()
+    .append("path")
+    .attr("class", function(j){
+      console.log("FYI: " + j.justiceName + " direction: " + j.direction + " and their vote was " + j.vote);
+      return "justice--vote " + j.slug;
+    })
+    // .attr("d", function(d) {
+    //     return lineGenerator(d.values); //values for each country
+    // });
+
+    var redCircle = svg.append("circle") //append those circles
+    .attr("r", 30) //they need a radius of size 3
+    .attr("cx", 40)
+    .attr("fill", "red")
+    .attr("cy", 40);
+}
 
 
 </script>
