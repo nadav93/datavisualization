@@ -7,12 +7,15 @@
   	border: 1px solid #f0f;
   }
 
+  .AScalia{
+    fill: blue;
+  }
+
 </style>
 
 <body>
 	<h1>SC Data</h1>
     <div class="g-chart-container"></div>
-
 </body>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -25,6 +28,14 @@ var chartContainer = d3.select(".g-chart-container");
 
 var w = 600 - margin.left - margin.right,
     h = 200 - margin.top - margin.bottom;
+
+// nadav = d3.scaleThreshold()
+//   .domain(["Ginsburg", "Sotomayor", "Kagan", "Breyer", "Kennedy", "Roberts", "Scalia", "Alito", "Thomas"])
+//   .range([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]); //1 more
+
+nadav2 = d3.scaleBand()
+  .domain(["Ginsburg", "Sotomayor", "Kagan", "Breyer", "Kennedy", "Roberts", "Scalia", "Alito", "Thomas"])
+  .range([0, 10]); //projecting to pixel land
 
 d3.csv("revised_sc_votes.csv", ready);
 function ready(err, data){
@@ -54,8 +65,6 @@ function ready(err, data){
 //   .domain([3, 6, 9, 12, 50])
 //   .range(["#eff3ff", "#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"]);
 
-
-
 //   var COLORS = ['#c51b7d','#e9a3c9','#fde0ef','#f7f7f7','#e6f5d0','#a1d76a','#4d9221'];
 
 // var threshold = d3.scaleThreshold()
@@ -66,10 +75,11 @@ function ready(err, data){
 //     .domain([-10, 5]);
 
 
-  	var xscale = d3.scaleBand() //created to use later
+  var xscale = d3.scaleBand() //created to use later
     .domain([0, 1, 2]).padding(0.1)
     //.domain([0, 1, 2, ,'Glabron','Svansota','Velvet','Trebi','Peatland', 'No. 457', 'No. 475', "No. 462", "Wisconsin No. 38"]).padding(0.1)
     .range([0,w])//to pixel land
+
 	var yscale = d3.scaleLinear() //created to use later
 		.domain([0,10])
 		.range([h,0])
