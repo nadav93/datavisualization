@@ -137,8 +137,12 @@ function ready(err, data){
     })
     .attr("fill", "red")
     .attr("cy", function(j){
-      if(j.justiceName == "AScalia"){
+      //if(j.justiceName == "AScalia"){
+      if(j.vote == (2 || 6 || 7)){
         return 50;
+      }
+      else if (j.vote == ""){ //for instance if they didn't vote
+        return 80;
       }
       else
       {
