@@ -75,14 +75,14 @@ function ready(err, data){
 //     .domain([-10, 5]);
 
 
-  var xscale = d3.scaleBand() //created to use later
+  /*var xscale = d3.scaleBand() //created to use later
     .domain([0, 1, 2]).padding(0.1)
     //.domain([0, 1, 2, ,'Glabron','Svansota','Velvet','Trebi','Peatland', 'No. 457', 'No. 475', "No. 462", "Wisconsin No. 38"]).padding(0.1)
     .range([0,w])//to pixel land
 
 	var yscale = d3.scaleLinear() //created to use later
 		.domain([0,10])
-		.range([h,0])
+		.range([h,0])*/
 
     // function circleDrawer(z){
   		// console.log("FYI: " + z.justiceName + " direction: " + z.direction + " and their vote was " + z.vote); //each justice who voted and how they voted
@@ -93,11 +93,11 @@ function ready(err, data){
 		.enter() //data should enter those elemnts
 		.append("div") //appending a div for each case
 		.attr("class", "a-group")
-		.attr("id", function(d){return d.key;}) //giving them an id of the case name
-		.attr("transform", function(d) { //d is the element at that index
-			console.log("yo")
-			return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
-		});
+		.attr("id", function(d){return d.key;}); //giving them an id of the case name
+		// .attr("transform", function(d) { //d is the element at that index
+		// 	console.log("yo")
+		// 	return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
+		// });
 
 		agroup.append("h4")
         .text(function(d) {
@@ -113,11 +113,11 @@ function ready(err, data){
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-	var xaxis = d3.axisBottom() //means the ticks will go below rather than above
+	/*var xaxis = d3.axisBottom() //means the ticks will go below rather than above
 		.scale(xscale) //needs to know scale to project along svg
 
 	var yaxis = d3.axisLeft()
-		.scale(yscale)
+		.scale(yscale)*/
 		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
 
     var justiceVote = svg.selectAll(".justice--vote")
@@ -141,7 +141,7 @@ function ready(err, data){
       if(j.vote == (2 || 6 || 7)){
         return 50;
       }
-      else if (j.vote == ""){ //for instance if they didn't vote
+      else if (j.vote == ""){ //if they didn't vote
         return 80;
       }
       else
@@ -149,15 +149,6 @@ function ready(err, data){
         return 100;
       }
     });
-    // .attr("d", function(d) {
-    //     return lineGenerator(d.values); //values for each country
-    // });
-
-    // var redCircle = svg.append("circle") //append those circles
-    // .attr("r", 30) //they need a radius of size 3
-    // .attr("cx", 40)
-    // .attr("fill", "red")
-    // .attr("cy", 40);
 }
 
 
