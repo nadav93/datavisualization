@@ -34,8 +34,8 @@ var w = 600 - margin.left - margin.right,
 //   .range([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]); //1 more
 
 nadav2 = d3.scaleBand()
-  .domain(["Ginsburg", "Sotomayor", "Kagan", "Breyer", "Kennedy", "Roberts", "Scalia", "Alito", "Thomas"])
-  .range([0, 10]); //projecting to pixel land
+  .domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "AMKennedy", "JGRoberts", "AScalia", "SAAlito", "CThomas"])
+  .range([0, w]); //projecting to pixel land
 
 d3.csv("revised_sc_votes.csv", ready);
 function ready(err, data){
@@ -91,12 +91,12 @@ function ready(err, data){
 	var agroup = chartContainer.selectAll(".a-group") //grab all items that have this a-group characteristic in the svg
 		.data(votesByCase) //here's my data that I am binding to the element
 		.enter() //data should enter those elemnts
-		.append("div") //append those circles
+		.append("div") //appending a div for each case
 		.attr("class", "a-group")
-		.attr("id", function(d){return d.key;})
+		.attr("id", function(d){return d.key;}) //giving them an id of the case name
 		.attr("transform", function(d) { //d is the element at that index
 			console.log("yo")
-			return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")"; //is this me scaling my dots
+			return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
 		});
 
 		agroup.append("h4")
@@ -120,7 +120,7 @@ function ready(err, data){
 		.scale(yscale)
 		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
 
-    var countryPath = svg.selectAll(".justice--vote")
+    var justiceVote = svg.selectAll(".justice--vote")
     .data(function(j) { 
         return j.values; 
     })
@@ -128,10 +128,13 @@ function ready(err, data){
     .append("circle")
     .attr("class", function(j){
       console.log("FYI: " + j.justiceName + " direction: " + j.direction + " and their vote was " + j.vote);
-      return "justice--vote " + j.justiceName;
+      return "justice--vote " + j.justiceName; //class name for individual vote
     })
-    .attr("r", 20) //they need a radius of size 3
-    .attr("cx", 40)
+    .attr("r", 20)
+    //.attr("cx", 40)
+    .attr("cx", function(r){
+      return nadav2(r.justiceName)
+    })
     .attr("fill", "red")
     .attr("cy", function(j){
       if(j.justiceName == "AScalia"){
