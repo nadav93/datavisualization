@@ -43,7 +43,7 @@ function ready(err, data){
 	//console.log(data);
 
 	var votesByCase = d3.nest() //returns an array of the cases
-  		.key(function(d) { return d.caseName; })
+  		.key(function(d) { return d.caseName; }) //should perhaps filter by caseIssuesId since it's unique
   		.entries(data);
 
   	console.log(votesByCase); //all cases
