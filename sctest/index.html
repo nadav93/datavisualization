@@ -7,14 +7,25 @@
   	border: 1px solid #f0f;
   }
 
-  .AScalia{
+  .NMGorsuch{
     fill: blue;
+  }
+
+  .majOpinWriter{
+    fill: black;
+  }
+
+  div.roberts{
+    background-image: url("http://barbarabrenner.net/wp-content/uploads/2012/07/Justice-Roberts1-150x150.jpg");
+    height: 100px;
+    width: 100px;
   }
 
 </style>
 
 <body>
 	<h1>SC Data</h1>
+    <div class="roberts"></div>
     <div class="g-chart-container"></div>
 </body>
 
@@ -33,17 +44,18 @@ var w = 600 - margin.left - margin.right,
 //   .domain(["Ginsburg", "Sotomayor", "Kagan", "Breyer", "Kennedy", "Roberts", "Scalia", "Alito", "Thomas"])
 //   .range([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]); //1 more
 
-nadav2 = d3.scaleBand()
-  .domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "AMKennedy", "JGRoberts", "AScalia", "SAAlito", "CThomas"])
+spacer = d3.scaleBand()
+  .domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "NMGorsuch", "AMKennedy", "JGRoberts", "SAAlito", "CThomas"])
+  //.domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "AMKennedy", "JGRoberts", "AScalia", "SAAlito", "CThomas"])
   .range([0, w]); //projecting to pixel land
 
-d3.csv("revised_sc_votes.csv", ready);
+d3.csv("SCDB_2017_01_justiceCentered_LegalProvision_ed.csv", ready);
 function ready(err, data){
 	if (err) throw "error loading data";
 	//console.log(data);
 
 	var votesByCase = d3.nest() //returns an array of the cases
-  		.key(function(d) { return d.caseName; }) //should perhaps filter by caseIssuesId since it's unique
+  		.key(function(d) { return d.caseIssuesId; }) //should perhaps filter by caseIssuesId since it's unique
   		.entries(data);
 
   	console.log(votesByCase); //all cases
@@ -104,7 +116,7 @@ function ready(err, data){
         // 	d.values.forEach(function(z){
         // 	circleDrawer(z);
         // });
-        	return d.key;
+        	return d.key + ": " + d.values[0].caseName;
         });
 
 	var svg = agroup.append("svg")
@@ -128,25 +140,34 @@ function ready(err, data){
     .append("circle")
     .attr("class", function(j){
       console.log("FYI: " + j.justiceName + " direction: " + j.direction + " and their vote was " + j.vote);
-      return "justice--vote " + j.justiceName; //class name for individual vote
+      if (j.justice == j.majOpinWriter){
+        return "justice--vote " + j.justiceName + " majOpinWriter";
+      }
+      else
+      {return "justice--vote " + j.justiceName;} //class name for individual vote
     })
+    /*.attr("class", function(j){
+      if (j.justice == j.majOpinWriter){
+        return "majOpinWriter";
+      }
+    })*/
     .attr("r", 20)
     //.attr("cx", 40)
     .attr("cx", function(r){
-      return nadav2(r.justiceName)
+      return spacer(r.justiceName)
     })
     .attr("fill", "red")
     .attr("cy", function(j){
       //if(j.justiceName == "AScalia"){
       if(j.vote == (2 || 6 || 7)){
-        return 50;
+        return 100;
       }
       else if (j.vote == ""){ //if they didn't vote
-        return 80;
+        return 150;
       }
       else
       {
-        return 100;
+        return 50;
       }
     });
 }
