@@ -3,7 +3,7 @@
 
 <style type="text/css">
 
-  svg {
+  .overallSvg {
   	border: 1px solid #f0f;
   }
 
@@ -12,20 +12,34 @@
   }
 
   .majOpinWriter{
-    fill: black;
+    stroke: black;
+    stroke-width: 3;
+    stroke-opacity: 0.9;
   }
 
-  div.roberts{
+  .roberts{
     background-image: url("http://barbarabrenner.net/wp-content/uploads/2012/07/Justice-Roberts1-150x150.jpg");
     height: 100px;
     width: 100px;
+  }
+
+  .rcorners {
+    border-radius: 25px;
+    background: #73AD21;
+    width: 45px;
+    height: 45px; 
+}
+  .test{
+    background: black;
   }
 
 </style>
 
 <body>
 	<h1>SC Data</h1>
-    <div class="roberts"></div>
+    <g><g class="test">test</g></g>
+    <g><svg class="roberts"></svg></g>
+    <div class="rcorners"></div>
     <div class="g-chart-container"></div>
 </body>
 
@@ -65,8 +79,8 @@ function ready(err, data){
   	// console.log(votesByCase[0].values[0].caseName);
 
   	votesByCase.forEach(function(d){ //looping through cases
-  		console.log(d.key + "!"); //case name
-  		console.log(d.values + "!!");  //the justice votes within that case
+  		console.log(d.key + " (case id)"); //case name
+  		console.log(d.values + " (array of justice votes within that case)");  //the justice votes within that case
   		d.values.forEach(function(z){ //looping through each justice for the individual cases
   			console.log(z.justiceName + " direction: " + z.direction + " and their vote was " + z.vote); //each justice who voted and how they voted
   			//z.newVar = z.justiceName + "!!!"; //making new data with relevant stuff
@@ -105,7 +119,7 @@ function ready(err, data){
 		.enter() //data should enter those elemnts
 		.append("div") //appending a div for each case
 		.attr("class", "a-group")
-		.attr("id", function(d){return d.key;}); //giving them an id of the case name
+		.attr("id", function(d){return d.key;}); //giving them an id of the case id
 		// .attr("transform", function(d) { //d is the element at that index
 		// 	console.log("yo")
 		// 	return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
@@ -116,13 +130,14 @@ function ready(err, data){
         // 	d.values.forEach(function(z){
         // 	circleDrawer(z);
         // });
-        	return d.key + ": " + d.values[0].caseName;
+        	return d.key + " " + d.values[0].caseName; //appending an h4 with the case id and name for each div
         });
 
-	var svg = agroup.append("svg")
+	var svg = agroup.append("svg") //within the div there's an svg
         .attr("width", w + margin.left + margin.right)
         .attr("height", h + margin.top + margin.bottom)
-        .append("g")
+        .attr("class", "overallSvg")
+        //.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 	/*var xaxis = d3.axisBottom() //means the ticks will go below rather than above
@@ -133,11 +148,11 @@ function ready(err, data){
 		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
 
     var justiceVote = svg.selectAll(".justice--vote")
-    .data(function(j) { 
+    .data(function(j) {
         return j.values; 
     })
     .enter()
-    .append("circle")
+    .append("rect") 
     .attr("class", function(j){
       console.log("FYI: " + j.justiceName + " direction: " + j.direction + " and their vote was " + j.vote);
       if (j.justice == j.majOpinWriter){
@@ -151,13 +166,14 @@ function ready(err, data){
         return "majOpinWriter";
       }
     })*/
-    .attr("r", 20)
+    .attr("width", 20)
+    .attr("height", 20)
     //.attr("cx", 40)
-    .attr("cx", function(r){
+    .attr("x", function(r){
       return spacer(r.justiceName)
     })
     .attr("fill", "red")
-    .attr("cy", function(j){
+    .attr("y", function(j){
       //if(j.justiceName == "AScalia"){
       if(j.vote == (2 || 6 || 7)){
         return 100;
