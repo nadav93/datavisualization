@@ -191,10 +191,15 @@ function ready(err, data){
       .attr("class", function(z){
         return ("justice--image " + z.justiceName)
       });
-      var img = svg.append("g:image")
+      var img = justiceImage.append("g:image")
       .attr("xlink:href", "https://abovethelaw.com/wp-content/uploads/2013/05/Sonia-Sotomayor.jpg")
       .attr("width", 50)
       .attr("height", 50)
+      .attr("x", function(r){
+        return spacer(r.justiceName)
+      })
+
+    svg.append("h5");
 }
 
 
