@@ -161,11 +161,6 @@ function ready(err, data){
       else
       {return "justice--vote " + j.justiceName;} //class name for individual vote
     })
-    /*.attr("class", function(j){
-      if (j.justice == j.majOpinWriter){
-        return "majOpinWriter";
-      }
-    })*/
     .attr("width", 20)
     .attr("height", 20)
     //.attr("cx", 40)
@@ -186,6 +181,20 @@ function ready(err, data){
         return 50;
       }
     });
+
+    var justiceImage = svg.selectAll(".justice--image")
+      .data(function(x) {
+          return x.values; 
+      })
+      .enter()
+      .append("svg")
+      .attr("class", function(z){
+        return ("justice--image " + z.justiceName)
+      });
+      var img = svg.append("g:image")
+      .attr("xlink:href", "https://abovethelaw.com/wp-content/uploads/2013/05/Sonia-Sotomayor.jpg")
+      .attr("width", 50)
+      .attr("height", 50)
 }
 
 
