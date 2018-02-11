@@ -193,7 +193,23 @@ function ready(err, data){
       });
       var img = justiceImage.append("g:image")
       .attr("xlink:href", function(l){
-        if(l.justiceName != "SSotomayor")
+        if(l.justiceName == "RBGinsburg")
+          return "https://www.biography.com/.image/t_share/MTE5NTU2MzE2MjMwNTUxMDUx/ruth-bader-ginsburg-9312041-1-402.jpg"
+        if(l.justiceName == "NMGorsuch")
+          return "http://www3.pictures.zimbio.com/gi/Neil+Gorsuch+Supreme+Court+Justices+Pose+Formal+AAlfm8IB8zUl.jpg"
+        if(l.justiceName == "EKagan")
+          return "https://law.arizona.edu/sites/default/files/kagan_portrait.png"
+        if(l.justiceName == "JGRoberts")
+          return "http://blog.legalsolutions.thomsonreuters.com/wp-content/uploads/2013/08/johnroberts.jpg"
+        if(l.justiceName == "SGBreyer")
+          return "https://www.famousbirthdays.com/faces/breyer-stephen-image.jpg"
+        if(l.justiceName == "SAAlito")
+          return "https://www.biography.com/.image/t_share/MTMxMTk0MTMyNDk1MzczNTg2/samuel_alito_wikimedia_commons_600x600jpg.jpg"
+        if(l.justiceName == "AMKennedy")
+          return "https://pixel.nymag.com/imgs/daily/intelligencer/2016/06/27/27-justice-anthony-kennedy.w190.h190.2x.jpg"
+        if(l.justiceName == "CThomas")
+          return "https://www.biography.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cg_face%2Cq_80%2Cw_300/MTE5NTU2MzE2Mzg3MTgyMDkx/clarence-thomas-9505658-2-402.jpg"
+        else
           return "https://abovethelaw.com/wp-content/uploads/2013/05/Sonia-Sotomayor.jpg"})
       .attr("width", 50)
       .attr("height", 50)
