@@ -3,9 +3,9 @@
 
 <style type="text/css">
 
-  .overallSvg {
+  /*.overallSvg {
   	border: 1px solid #f0f;
-  }
+  }*/
 
   .NMGorsuch{
     fill: #e5e3e3;
@@ -34,7 +34,6 @@
   }
 
   .axis line { 
-    stroke: #d0d0d0;
     stroke-dasharray: 4px 4px;
   }
 
@@ -57,7 +56,7 @@ var margin = {top: 5, right: 10, bottom: 20, left: 20};
 var chartContainer = d3.select(".g-chart-container");
 
 var w = 600 - margin.left - margin.right,
-    h = 200 - margin.top - margin.bottom;
+    h = 220 - margin.top - margin.bottom;
 
 // nadav = d3.scaleThreshold()
 //   .domain(["Ginsburg", "Sotomayor", "Kagan", "Breyer", "Kennedy", "Roberts", "Scalia", "Alito", "Thomas"])
@@ -66,7 +65,7 @@ var w = 600 - margin.left - margin.right,
 spacer = d3.scaleBand()
   .domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "NMGorsuch", "AMKennedy", "JGRoberts", "SAAlito", "CThomas"])
   //.domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "AMKennedy", "JGRoberts", "AScalia", "SAAlito", "CThomas"])
-  .range([40, w]); //projecting to pixel land
+  .range([60, w]); //projecting to pixel land
 
 voteSpacer = d3.scaleBand()
   .domain(["majority", "minority", "didNotVote"])
@@ -140,7 +139,7 @@ function ready(err, data){
         // 	d.values.forEach(function(z){
         // 	circleDrawer(z);
         // });
-        	return d.key + " " + d.values[0].caseName; //appending an h4 with the case id and name for each div
+        	return d.values[0].caseName + " (" + d.key +")"; //appending an h4 with the case id and name for each div
         });
 
 	var svg = agroup.append("svg") //within the div there's an svg
@@ -160,9 +159,14 @@ function ready(err, data){
     .call(xaxis)
     .attr("transform", "translate(0," + h + ")"); //moves the x axis down*/
 	
-  /*var yaxis = d3.axisLeft()
-		.scale(yscale)*/
+  var yaxis = d3.axisRight()
+		.scale(voteSpacer)
+    .tickSizeOuter(0)
 		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
+
+  svg.append("g") //"g" stands for group
+    .attr("class", "axis") //would give them all a class
+    .call(yaxis);
 
     var justiceVote = svg.selectAll(".justice--vote")
     .data(function(j) {
@@ -184,11 +188,10 @@ function ready(err, data){
     .attr("x", function(r){
       return spacer(r.justiceName) //maps x location to graph
     })
-    .attr("fill", "grey")
+    .attr("fill", "#828080")
     .attr("y", function(j){
       //if(j.justiceName == "AScalia"){
       if(j.vote == (2 || 6 || 7)){
-        console.log(voteSpacer("minority")+ "asdfasdfasdfadfs")
         //return 100;
         return voteSpacer("minority");
       }
