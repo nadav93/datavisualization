@@ -8,12 +8,12 @@
   }
 
   .NMGorsuch{
-    fill: blue;
+    fill: #e5e3e3;
   }
 
   .majOpinWriter{
     stroke: black;
-    stroke-width: 3;
+    stroke-width: 2;
     stroke-opacity: 0.9;
   }
 
@@ -66,11 +66,11 @@ var w = 600 - margin.left - margin.right,
 spacer = d3.scaleBand()
   .domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "NMGorsuch", "AMKennedy", "JGRoberts", "SAAlito", "CThomas"])
   //.domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "AMKennedy", "JGRoberts", "AScalia", "SAAlito", "CThomas"])
-  .range([0, w]); //projecting to pixel land
+  .range([40, w]); //projecting to pixel land
 
 voteSpacer = d3.scaleBand()
   .domain(["majority", "minority", "didNotVote"])
-    .range([50, 180])
+    .range([60, 240])
     console.log(voteSpacer("minority"));
 
 d3.csv("SCDB_2017_01_justiceCentered_LegalProvision_ed.csv", ready);
@@ -178,13 +178,13 @@ function ready(err, data){
       else
       {return "justice--vote " + j.justiceName;} //class name for individual vote
     })
-    .attr("width", 20)
+    .attr("width", 50)
     .attr("height", 20)
     //.attr("cx", 40)
     .attr("x", function(r){
       return spacer(r.justiceName) //maps x location to graph
     })
-    .attr("fill", "red")
+    .attr("fill", "grey")
     .attr("y", function(j){
       //if(j.justiceName == "AScalia"){
       if(j.vote == (2 || 6 || 7)){
