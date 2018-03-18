@@ -33,13 +33,18 @@
     background: black;
   }
 
+  .axis line { 
+    stroke: #d0d0d0;
+    stroke-dasharray: 4px 4px;
+  }
+
 </style>
 
 <body>
-	<h1>SC Data</h1>
-    <g><g class="test">test</g></g>
+	<h1>How did Gorsuch vote in his first term?</h1>
+    <!--<g><g class="test">test</g></g>
     <g><svg class="roberts"></svg></g>
-    <div class="rcorners"></div>
+    <div class="rcorners"></div>-->
     <div class="g-chart-container"></div>
 </body>
 
@@ -63,14 +68,19 @@ spacer = d3.scaleBand()
   //.domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "AMKennedy", "JGRoberts", "AScalia", "SAAlito", "CThomas"])
   .range([0, w]); //projecting to pixel land
 
+voteSpacer = d3.scaleBand()
+  .domain(["majority", "minority", "didNotVote"])
+    .range([50, 180])
+    console.log(voteSpacer("minority"));
+
 d3.csv("SCDB_2017_01_justiceCentered_LegalProvision_ed.csv", ready);
 function ready(err, data){
 	if (err) throw "error loading data";
 	//console.log(data);
 
-	var votesByCase = d3.nest() //returns an array of the cases
-  		.key(function(d) { return d.caseIssuesId; }) //should perhaps filter by caseIssuesId since it's unique
-  		.entries(data);
+	var votesByCase = d3.nest() //returns an array of the cases.
+  		.key(function(d) { return d.caseIssuesId; }) //filtering by caseIssuesId since it's unique
+  		.entries(data); //my key will be caseIssuesID with the value being an array of votes on that case
 
   	console.log(votesByCase); //all cases
   	console.log(votesByCase.length);
@@ -79,11 +89,11 @@ function ready(err, data){
   	// console.log(votesByCase[0].values[0].caseName);
 
   	votesByCase.forEach(function(d){ //looping through cases
-  		console.log(d.key + " (case id)"); //case name
+  		console.log(d.key + " (case id)"); //case id
   		console.log(d.values + " (array of justice votes within that case)");  //the justice votes within that case
   		d.values.forEach(function(z){ //looping through each justice for the individual cases
   			console.log(z.justiceName + " direction: " + z.direction + " and their vote was " + z.vote); //each justice who voted and how they voted
-  			//z.newVar = z.justiceName + "!!!"; //making new data with relevant stuff
+  			//z.newVar = z.justiceName + "!!!"; if I wanted to add a variable
   		});
   	});
 
@@ -140,10 +150,17 @@ function ready(err, data){
         //.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+//IF I WANTED AN X AXIS:
 	/*var xaxis = d3.axisBottom() //means the ticks will go below rather than above
-		.scale(xscale) //needs to know scale to project along svg
+		.scale(spacer) //needs to know scale to project along svg
+    .tickSize(-h); //optional
 
-	var yaxis = d3.axisLeft()
+  svg.append("g") //"g" is the parent group for the ticks
+    .attr("class", "axis") //would give them all a class called axis
+    .call(xaxis)
+    .attr("transform", "translate(0," + h + ")"); //moves the x axis down*/
+	
+  /*var yaxis = d3.axisLeft()
 		.scale(yscale)*/
 		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
 
@@ -165,20 +182,24 @@ function ready(err, data){
     .attr("height", 20)
     //.attr("cx", 40)
     .attr("x", function(r){
-      return spacer(r.justiceName)
+      return spacer(r.justiceName) //maps x location to graph
     })
     .attr("fill", "red")
     .attr("y", function(j){
       //if(j.justiceName == "AScalia"){
       if(j.vote == (2 || 6 || 7)){
-        return 100;
+        console.log(voteSpacer("minority")+ "asdfasdfasdfadfs")
+        //return 100;
+        return voteSpacer("minority");
       }
       else if (j.vote == ""){ //if they didn't vote
-        return 150;
+        //return 150;
+        return voteSpacer("didNotVote");
       }
       else
       {
-        return 50;
+        //return 50;        
+        return voteSpacer("majority");
       }
     });
 
