@@ -72,7 +72,7 @@ voteSpacer = d3.scaleBand()
     .range([60, 240])
     console.log(voteSpacer("minority"));
 
-d3.csv("SCDB_2017_01_justiceCentered_LegalProvision_ed.csv", ready);
+d3.csv("SCDB_2017_01_justiceCentered_LegalProvision_removed_blank.csv", ready);
 function ready(err, data){
 	if (err) throw "error loading data";
 	//console.log(data);
