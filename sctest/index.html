@@ -8,6 +8,7 @@
   }*/
   h4{
     font-family: nytfranklin;
+    margin-left: 80px;
   }
   /*.NMGorsuch{
     fill: #e5e3e3;
@@ -77,7 +78,7 @@ spacer = d3.scaleBand()
 voteSpacer = d3.scaleBand()
   .domain(["majority", "minority", "didNotVote"])
     .range([60, 240])
-    console.log(voteSpacer("minority"));
+    //console.log(voteSpacer("minority"));
 
 d3.csv("SCDB_2017_01_justiceCentered_LegalProvision_removed_blank.csv", ready);
 function ready(err, data){
@@ -171,9 +172,10 @@ function ready(err, data){
     .tickSizeOuter(0)
 		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
 
-  svg.append("g") //"g" stands for group
+  //LABELED AXIS:
+  /*svg.append("g") //"g" stands for group
     .attr("class", "axis") //would give them all a class
-    .call(yaxis);
+    .call(yaxis);*/
 
     var justiceVote = svg.selectAll(".justice--vote")
     .data(function(j) {
@@ -227,7 +229,7 @@ function ready(err, data){
         if(l.justiceName == "RBGinsburg")
           return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Ginsburg-c.png"
         if(l.justiceName == "NMGorsuch")
-          return "Gorsuch.png"
+          return "Gorsuch-c.png"
         if(l.justiceName == "EKagan")
           return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Kagan-c.png"
         if(l.justiceName == "JGRoberts")
