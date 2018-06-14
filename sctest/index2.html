@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style type="text/css">
+
+  /*.overallSvg {
+  	border: 1px solid #f0f;
+  }*/
+  h4{
+    font-family: nytfranklin;
+    margin-left: 1px;
+    padding-top: 0px;
+    display: inline;
+  }
+  /*.NMGorsuch{
+    fill: #e5e3e3;
+  }*/
+
+  h1{
+    font-family: nytcheltenham;
+    font-style: italic;
+  }
+
+  .majOpinWriter{
+    stroke: black;
+    stroke-width: 2;
+    stroke-opacity: 0.9;
+  }
+
+  .collapse{
+    height: 0px;
+  }
+
+  .roberts{
+    background-image: url("http://barbarabrenner.net/wp-content/uploads/2012/07/Justice-Roberts1-150x150.jpg");
+    height: 100px;
+    width: 100px;
+  }
+
+  .rcorners {
+    border-radius: 25px;
+    background: #73AD21;
+    width: 45px;
+    height: 45px; 
+}
+  .test{
+    background: black;
+  }
+
+  .axis line { 
+    stroke-dasharray: 4px 4px;
+  }
+
+</style>
+
+<body>
+	<h1>How did Gorsuch vote in his first term?</h1>
+    <!--<g><g class="test">test</g></g>
+    <g><svg class="roberts"></svg></g>
+    <div class="rcorners"></div>-->
+    <div class="g-chart-container"></div>
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
+
+var margin = {top: 5, right: 10, bottom: 10, left: 20};
+
+var chartContainer = d3.select(".g-chart-container");
+
+var w = 600 - margin.left - margin.right,
+    h = 80 - margin.top - margin.bottom;
+
+// nadav = d3.scaleThreshold()
+//   .domain(["Ginsburg", "Sotomayor", "Kagan", "Breyer", "Kennedy", "Roberts", "Scalia", "Alito", "Thomas"])
+//   .range([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]); //1 more
+
+spacer = d3.scaleBand()
+  .domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "NMGorsuch", "AMKennedy", "JGRoberts", "SAAlito", "CThomas"])
+  //.domain(["RBGinsburg", "SSotomayor", "EKagan", "SGBreyer", "AMKennedy", "JGRoberts", "AScalia", "SAAlito", "CThomas"])
+  .range([60, w]); //projecting to pixel land
+
+voteSpacer = d3.scaleBand()
+  .domain(["majority", "minority", "didNotVote"])
+    .range([60, 240])
+    //console.log(voteSpacer("minority"));
+
+d3.csv("SCDB_2017_01_justiceCentered_LegalProvision_removed_blank.csv", ready);
+function ready(err, data){
+	if (err) throw "error loading data";
+	//console.log(data);
+
+	var votesByCase = d3.nest() //returns an array of the cases.
+  		.key(function(d) { return d.caseIssuesId; }) //filtering by caseIssuesId since it's unique
+  		.entries(data); //my key will be caseIssuesID with the value being an array of votes on that case
+
+  	console.log(votesByCase); //all cases
+  	console.log(votesByCase.length);
+  	// console.log(votesByCase[0]); //one case
+  	// console.log(votesByCase[0].values[0]);  	  		  	  		
+  	// console.log(votesByCase[0].values[0].caseName);
+    i = 0;
+  	votesByCase.forEach(function(d){ //looping through cases
+      console.log("index" + i);
+      if (i == 0){
+        console.log("hey");
+        //console.log(d.values[0]);
+        d.values.forEach(function(z){
+          z.firstCase = true;
+        });
+        //d.values[0].newVar = "yo";
+        //d.values[1].newVar = "yo";
+        //console.log("NEW: " + votesByCase[0].newVar);
+        console.log(d.values);
+        console.log(d.values[0]);
+      }
+      i++;
+  		console.log(d.key + " (case id)"); //case id
+  		console.log(d.values + " (array of justice votes within that case)");  //the justice votes within that case
+  		d.values.forEach(function(z){ //looping through each justice for the individual cases
+  			console.log(z.justiceName + " direction: " + z.direction + " and their vote was " + z.vote); //each justice who voted and how they voted
+  			//z.newVar = z.justiceName + "!!!"; if I wanted to add a variable
+  		});
+  	});
+
+	var agroup = chartContainer.selectAll(".a-group") //grab all items that have this a-group characteristic in the svg
+		.data(votesByCase) //here's my data that I am binding to the element
+		.enter() //data should enter those elemnts
+		.append("div") //appending a div for each case
+		.attr("class", "a-group")
+		.attr("id", function(d){return d.key;}); //giving them an id of the case id
+		// .attr("transform", function(d) { //d is the element at that index
+		// 	console.log("yo")
+		// 	return "translate(" + xscale(d.x) + "," + yscale(d.y) + ")";
+		// });
+
+	var svg = agroup.append("svg") //within the div there's an svg
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom)
+        .attr("class", "overallSvg")
+        //.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    agroup.append("h4")
+        .text(function(d) {
+        //  d.values.forEach(function(z){
+        //  circleDrawer(z);
+        // });
+          //return d.values[0].caseName + " (" + d.key +")"; //appending an h4 with the case id and name for each div
+          return d.values[0].caseName; //appending an h4 with the case id and name for each div
+        });
+
+//IF I WANTED AN X AXIS:
+	/*var xaxis = d3.axisBottom() //means the ticks will go below rather than above
+		.scale(spacer) //needs to know scale to project along svg
+    .tickSize(-h); //optional
+
+  svg.append("g") //"g" is the parent group for the ticks
+    .attr("class", "axis") //would give them all a class called axis
+    .call(xaxis)
+    .attr("transform", "translate(0," + h + ")"); //moves the x axis down*/
+	
+  var yaxis = d3.axisRight()
+		.scale(voteSpacer)
+    .tickSizeOuter(0)
+		//.tickSize(-w); //creates horiz dashed lines. we want the horizontal line size for the y axis to be the width
+
+  //LABELED AXIS:
+  /*svg.append("g") //"g" stands for group
+    .attr("class", "axis") //would give them all a class
+    .call(yaxis);*/
+
+    var justiceVote = svg.selectAll(".justice--vote")
+    .data(function(j) {
+        return j.values; 
+    })
+    .enter()
+    .append("rect") 
+    .attr("class", function(j){
+      console.log("FYI: " + j.justiceName + " direction: " + j.direction + " and their vote was " + j.vote);
+      if (j.justice == j.majOpinWriter){
+        return "justice--vote " + j.justiceName + " majOpinWriter";
+      }
+      else
+      {return "justice--vote " + j.justiceName;} //class name for individual vote
+    })
+    .attr("width", 50)
+    .attr("height", 20)
+    //.attr("cx", 40)
+    .attr("x", function(r){
+      return spacer(r.justiceName) //maps x location to graph
+    })
+    .attr("fill", function(j){
+      if(j.vote == (2 || 6 || 7)){
+        //minority;
+        return "#cfcfd1";
+      }
+      else if (j.vote == ""){ //if they didn't vote
+        //did not vote;
+        return "white";
+      }
+      else
+      {
+        //majority;        
+        return "#565656";
+      }
+    })
+    .attr("y", function(z){
+      return 55;
+    });
+
+    /*var caseTitle = svg.selectAll(".case-title")
+      .data(function(x) {
+        console.log("here: " + x.values);
+          return x.values;
+      })
+      .enter()
+      .append("h4")
+      .text(function(c){
+        console.log("yoyoyo");
+        return ("hi");
+      })
+      .attr("class", function(z){
+        //console.log(z.justiceName + "NADAV")
+        return ("case-title");
+      });*/
+
+    var justiceImage = svg.selectAll(".justice--image")
+      .data(function(x) {
+          return x.values; 
+      })
+      .enter()
+      .append("svg")
+      .attr("class", function(z){
+        console.log(z.justiceName + "NADAV")
+        if(!z.firstCase){
+          return ("collapse")
+        }
+        return ("justice--image " + z.justiceName)
+      });
+      var img = justiceImage.append("g:image")
+      .attr("xlink:href", function(l){
+        console.log(l);
+        if(l.firstCase){//if this is the first case
+          if(l.justiceName == "RBGinsburg")
+          return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Ginsburg-c.png"
+          if(l.justiceName == "NMGorsuch")
+            return "Gorsuch-c.png"
+          if(l.justiceName == "EKagan")
+            return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Kagan-c.png"
+          if(l.justiceName == "JGRoberts")
+            return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Roberts-c.png"
+          if(l.justiceName == "SGBreyer")
+            return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Breyer-c.png"
+          if(l.justiceName == "SAAlito")
+            return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Alito-c.png"
+          if(l.justiceName == "AMKennedy")
+            return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Kennedy-c.png"
+          if(l.justiceName == "CThomas")
+            return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Thomas-c.png"
+          else
+            return "https://static01.nyt.com/newsgraphics/2016/02/14/scotus-2016/fda2438dba59033c277383a410306c1ed76d6575/Sotomayor-c.png"
+        }
+      })
+      .attr("width", function(a){
+        if(!a.firstCase){
+          return(0);
+        }
+        return(50)})
+      .attr("height", function(b){
+        if(!b.firstCase){
+          return(0);
+        }
+        return(50)})
+      .attr("x", function(r){
+        return spacer(r.justiceName)
+      })
+
+}
+
+
+</script>
